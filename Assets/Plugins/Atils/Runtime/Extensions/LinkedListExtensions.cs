@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace Atils.Runtime.Extensions
 {
+	// TODO finish, tests
 	public static class LinkedListExtensions
 	{
 		/// <summary>

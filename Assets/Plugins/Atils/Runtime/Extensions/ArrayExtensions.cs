@@ -5,6 +5,8 @@ namespace Atils.Runtime.Extensions
 {
 	public static class ArrayExtensions
 	{
+		#region Getting random items
+
 		/// <summary>
 		/// Get random item type of T from the source.
 		/// </summary>
@@ -74,5 +76,7 @@ namespace Atils.Runtime.Extensions
 		{
 			return (source as IEnumerable<T>).GetRandom(match);
 		}
+
+		#endregion
 	}
 }
