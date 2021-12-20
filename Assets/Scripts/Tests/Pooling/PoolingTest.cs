@@ -4,12 +4,12 @@ using Zenject;
 
 public class PoolingTest : MonoBehaviour
 {
-	SampleSceneObjectsPoolView _sampleSceneObjectsPoolView = default;
+	ObjectsPoolView _objectsPoolView = default;
 
 	[Inject]
-	private void Construct(SampleSceneObjectsPoolView sampleSceneObjectsPoolView)
+	private void Construct(ObjectsPoolView sampleSceneObjectsPoolView)
 	{
-		_sampleSceneObjectsPoolView = sampleSceneObjectsPoolView;
+		_objectsPoolView = sampleSceneObjectsPoolView;
 	}
 
 	private void Start()
@@ -20,7 +20,8 @@ public class PoolingTest : MonoBehaviour
 	[ContextMenu("StartTest")]
 	private void StartTest()
 	{
-		IPoolObject poolObject1 = _sampleSceneObjectsPoolView.GetObjectProvider<CubeView>().WithPosition(new Vector3(1, 1, -1)).WithLocalScale(new Vector3(1, 0.5f, 1)).GetObject();
-		IPoolObject poolObject2 = _sampleSceneObjectsPoolView.GetObject<CylinderView>();
+		IPoolObject poolObject1 = _objectsPoolView.GetObjectProvider<CubeView>().WithPosition(new Vector3(1, 1, -1)).WithLocalScale(new Vector3(1, 0.5f, 1)).GetObject();
+		IPoolObject poolObject2 = _objectsPoolView.GetObject<CylinderView>();
+		IPoolObject poolObject3 = _objectsPoolView.GetObject<SphereView>();
 	}
 }

@@ -8,7 +8,7 @@ using Zenject;
 
 namespace Atils.Runtime.Pooling
 {
-	public abstract class ObjectsPoolView : PausableMonoBehaviour, IPoolView
+	public class ObjectsPoolView : PausableMonoBehaviour
 	{
 		[SerializeField] private List<PoolObject> _poolObjectPrefabs = default;
 		Dictionary<Type, PoolObjectsHolderView> _poolObjectsHolderViews = new Dictionary<Type, PoolObjectsHolderView>();

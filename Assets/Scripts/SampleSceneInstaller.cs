@@ -9,7 +9,5 @@ public class SampleSceneInstaller : MonoInstaller
 	public override void InstallBindings()
 	{
 		PoolingSystemBinder.Bind(Container, _objectsPoolView);
-
-		Container.Bind<SampleSceneObjectsPoolView>().FromComponentInNewPrefab(_objectsPoolView).AsSingle().NonLazy();
 	}
 }
