@@ -1,3 +1,4 @@
+using Atils.Runtime.Generics;
 using System;
 using System.Reflection;
 using UnityEngine;
@@ -34,7 +35,7 @@ namespace Atils.Runtime.Pooling
 					isSuccess = false;
 				}
 
-				var objectFactoryInstance = Activator.CreateInstance(objectFactoryType);
+				object objectFactoryInstance = Activator.CreateInstance(objectFactoryType);
 
 				if (objectFactoryType != null && !(objectFactoryInstance is PlaceholderFactory<IPoolObject>))
 				{
@@ -54,13 +55,12 @@ namespace Atils.Runtime.Pooling
 				Type objectType = objectsPoolView.PoolObjectPrefabs[i].GetType();
 				Type objectFactoryType = objectType.GetNestedType(FactoryClassName);
 
-				MethodInfo methodInfo = typeof(PoolingSystemBinder).GetMethod(nameof(BindFactoryFromComponentInNewPrefab),
-																			  BindingFlags.Static | BindingFlags.NonPublic,
-																			  null,
-																			  new Type[] { typeof(DiContainer), typeof(ObjectsPoolView) },
-																			  null);
-				MethodInfo genericMethod = methodInfo.MakeGenericMethod(objectType, objectFactoryType);
-				genericMethod.Invoke(null, new object[] { diContainer, objectsPoolView });
+				GenericMethodGenerator.GetGenericMethod(typeof(PoolingSystemBinder), nameof(BindFactoryFromComponentInNewPrefab), null)
+					.WithBindingFlags(BindingFlags.Static | BindingFlags.NonPublic)
+					.WithTypes(typeof(DiContainer), typeof(ObjectsPoolView))
+					.SetTypeArguments(objectType, objectFactoryType)
+					.SetParameters(diContainer, objectsPoolView)
+					.Invoke();
 			}
 		}
 

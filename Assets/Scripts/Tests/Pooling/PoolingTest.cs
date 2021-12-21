@@ -20,8 +20,20 @@ public class PoolingTest : MonoBehaviour
 	[ContextMenu("StartTest")]
 	private void StartTest()
 	{
-		IPoolObject poolObject1 = _objectsPoolView.GetObjectProvider<CubeView>().WithPosition(new Vector3(1, 1, -1)).WithLocalScale(new Vector3(1, 0.5f, 1)).GetObject();
+		IPoolObject poolObject1 = _objectsPoolView.GetObjectProvider<CubeView>()
+			.SetPosition(new Vector3(1, 1, -1))
+			.SetLocalScale(new Vector3(1, 0.5f, 1))
+			.SetParent(null)
+			.GetObject();
+
+		_objectsPoolView.GetObjectProvider<CubeView>()
+			.SetPosition(new Vector3(1, 1, 1))
+			.SetParent(null)
+			.GetObject();
+
 		IPoolObject poolObject2 = _objectsPoolView.GetObject<CylinderView>();
 		IPoolObject poolObject3 = _objectsPoolView.GetObject<SphereView>();
+
+		IPoolObject poolObject4 = _objectsPoolView.GetObject(typeof(SphereView));
 	}
 }

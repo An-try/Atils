@@ -1,3 +1,4 @@
+using Atils.Runtime.Generics;
 using Atils.Runtime.Pause;
 using System;
 using System.Collections.Generic;
@@ -11,26 +12,12 @@ namespace Atils.Runtime.Pooling
 	public class ObjectsPoolView : PausableMonoBehaviour
 	{
 		[SerializeField] private List<PoolObject> _poolObjectPrefabs = default;
-		Dictionary<Type, PoolObjectsHolderView> _poolObjectsHolderViews = new Dictionary<Type, PoolObjectsHolderView>();
-		public List<PoolObject> PoolObjectPrefabs => _poolObjectPrefabs;
-
-		//[SerializeField] private PoolObject _poolObjectPrefab = default;
-		[SerializeField] private int _starterAmount = 1;
-
-		//private T _factory = default;
-
-		//private List<PoolObject> _poolObjects = default;
-
-		//public PoolObject PoolObjectPrefab => _poolObjectPrefab;
-		//public IEnumerable<IPoolObject> ActiveObjects => _poolObjects.Where(@object => @object.IsActiveInPool);
-
-		//[Inject]
-		//private void Construct(T factory)
-		//{
-		//	_factory = factory;
-		//}
 
 		private DiContainer _diContainer = default;
+
+		private Dictionary<Type, PoolObjectsHolderView> _poolObjectsHolderViews = new Dictionary<Type, PoolObjectsHolderView>();
+
+		public List<PoolObject> PoolObjectPrefabs => _poolObjectPrefabs;
 
 		[Inject]
 		private void Construct(DiContainer diContainer)
@@ -62,28 +49,15 @@ namespace Atils.Runtime.Pooling
 				Type objectType = _poolObjectPrefabs[i].GetType();
 				Type objectFactoryType = objectType.GetNestedType("Factory");
 
-				MethodInfo methodInfo = typeof(DiContainer).GetMethod(nameof(DiContainer.Resolve),
-																	  BindingFlags.Instance | BindingFlags.Public,
-																	  null,
-																	  new Type[] { },
-																	  null);
-				MethodInfo genericMethod = methodInfo.MakeGenericMethod(objectFactoryType);
-				PlaceholderFactory<IPoolObject> factory = (PlaceholderFactory<IPoolObject>)genericMethod.Invoke(_diContainer, null);
+				PlaceholderFactory<IPoolObject> factory = GenericMethodGenerator.GetGenericMethod(typeof(DiContainer), nameof(DiContainer.Resolve), _diContainer)
+					.WithBindingFlags(BindingFlags.Instance | BindingFlags.Public)
+					.SetTypeArguments(objectFactoryType)
+					.Invoke<PlaceholderFactory<IPoolObject>>();
 
 				poolObjectsHolderView.Initialize(factory);
 
 				_poolObjectsHolderViews.Add(objectType, poolObjectsHolderView);
 			}
-
-
-
-
-			//_poolObjects = new List<PoolObject>();
-
-			//for (int i = 0; i < _starterAmount; i++)
-			//{
-			//	AddObject(_poolObjectPrefab.name, transform);
-			//}
 		}
 
 		public PoolObject GetObjectPrefab<T>() where T : IPoolObject
@@ -94,6 +68,11 @@ namespace Atils.Runtime.Pooling
 		public IPoolObject GetObject<T>() where T : IPoolObject
 		{
 			return GetPoolObjectsHolderView<T>().GetObject<T>();
+		}
+
+		public IPoolObject GetObject(Type type)
+		{
+			return default;// GetPoolObjectsHolderView(type).GetObject(type);
 		}
 
 		public PoolObjectProvider GetObjectProvider<T>() where T : IPoolObject

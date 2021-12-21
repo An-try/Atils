@@ -8,6 +8,8 @@ public class SampleSceneInstaller : MonoInstaller
 
 	public override void InstallBindings()
 	{
+		// TODO save-load system
+
 		PoolingSystemBinder.Bind(Container, _objectsPoolView);
 	}
 }

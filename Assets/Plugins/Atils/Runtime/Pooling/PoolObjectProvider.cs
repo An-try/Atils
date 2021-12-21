@@ -16,25 +16,25 @@ namespace Atils.Runtime.Pooling
 			return PoolObject;
 		}
 
-		public PoolObjectProvider WithPosition(Vector3 position)
+		public PoolObjectProvider SetPosition(Vector3 position)
 		{
 			PoolObject.Transform.position = position;
 			return this;
 		}
 
-		public PoolObjectProvider WithRotation(Quaternion rotation)
+		public PoolObjectProvider SetRotation(Quaternion rotation)
 		{
 			PoolObject.Transform.rotation = rotation;
 			return this;
 		}
 
-		public PoolObjectProvider WithLocalScale(Vector3 localScale)
+		public PoolObjectProvider SetLocalScale(Vector3 localScale)
 		{
 			PoolObject.Transform.localScale = localScale;
 			return this;
 		}
 
-		public PoolObjectProvider WithParent(Transform parent)
+		public PoolObjectProvider SetParent(Transform parent)
 		{
 			PoolObject.Transform.SetParent(parent);
 			return this;
