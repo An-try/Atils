@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 9206773147991449541}
   - component: {fileID: 9206773147991449540}
   m_Layer: 0
-  m_Name: ObjectsPoolView
+  m_Name: SampleSceneObjectsPoolView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
