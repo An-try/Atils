@@ -84,13 +84,13 @@ namespace Atils.Runtime.Generics
 			return this;
 		}
 
-		public GenericMethodProvider SetTypeArguments(params Type[] typeArguments)
+		public GenericMethodProvider WithTypeArguments(params Type[] typeArguments)
 		{
 			_typeArguments = typeArguments;
 			return this;
 		}
 
-		public GenericMethodProvider SetParameters(params object[] parameters)
+		public GenericMethodProvider WithParameters(params object[] parameters)
 		{
 			_parameters = parameters;
 			return this;

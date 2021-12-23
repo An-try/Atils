@@ -123,6 +123,49 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &215015287
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 215015288}
+  - component: {fileID: 215015289}
+  m_Layer: 0
+  m_Name: SaveableLoadableObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &215015288
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 215015287}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -45, y: 27, z: 12}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &215015289
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 215015287}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47aed96f93d1c984390ccd59b5c01abc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &313147533
 GameObject:
   m_ObjectHideFlags: 0
@@ -167,6 +210,49 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &364749361
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 364749362}
+  - component: {fileID: 364749363}
+  m_Layer: 0
+  m_Name: SaveLoadManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &364749362
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 364749361}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 11
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &364749363
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 364749361}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca4e4a8fbcaad4c43b283ff631bc5009, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &569523634
 GameObject:
   m_ObjectHideFlags: 0
@@ -919,8 +1005,6 @@ MonoBehaviour:
   _highlightMaterial: {fileID: -8395525895840582585, guid: 9eb179d63d8aa744db1a8ad8e32e0b08, type: 3}
   _renderers:
   - {fileID: 1901073122}
-  _highlightMaterials: []
-  _defaultMaterialsContainers: []
 --- !u!114 &1901073113
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -936,8 +1020,6 @@ MonoBehaviour:
   _highlightMaterial: {fileID: -8395525895840582585, guid: 9eb179d63d8aa744db1a8ad8e32e0b08, type: 3}
   _renderers:
   - {fileID: 1901073123}
-  _highlightMaterials: []
-  _defaultMaterialsContainers: []
 --- !u!114 &1901073114
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -953,8 +1035,6 @@ MonoBehaviour:
   _highlightMaterial: {fileID: -8395525895840582585, guid: 9eb179d63d8aa744db1a8ad8e32e0b08, type: 3}
   _renderers:
   - {fileID: 1901073124}
-  _highlightMaterials: []
-  _defaultMaterialsContainers: []
 --- !u!114 &1901073115
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -970,8 +1050,6 @@ MonoBehaviour:
   _highlightMaterial: {fileID: -8395525895840582585, guid: 9eb179d63d8aa744db1a8ad8e32e0b08, type: 3}
   _renderers:
   - {fileID: 1901073125}
-  _highlightMaterials: []
-  _defaultMaterialsContainers: []
 --- !u!114 &1901073116
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -987,8 +1065,6 @@ MonoBehaviour:
   _highlightMaterial: {fileID: -8395525895840582585, guid: 9eb179d63d8aa744db1a8ad8e32e0b08, type: 3}
   _renderers:
   - {fileID: 1901073126}
-  _highlightMaterials: []
-  _defaultMaterialsContainers: []
 --- !u!114 &1901073117
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1004,8 +1080,6 @@ MonoBehaviour:
   _highlightMaterial: {fileID: -8395525895840582585, guid: 9eb179d63d8aa744db1a8ad8e32e0b08, type: 3}
   _renderers:
   - {fileID: 1901073127}
-  _highlightMaterials: []
-  _defaultMaterialsContainers: []
 --- !u!114 &1901073118
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1021,8 +1095,6 @@ MonoBehaviour:
   _highlightMaterial: {fileID: -8395525895840582585, guid: 9eb179d63d8aa744db1a8ad8e32e0b08, type: 3}
   _renderers:
   - {fileID: 1901073128}
-  _highlightMaterials: []
-  _defaultMaterialsContainers: []
 --- !u!114 &1901073119
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1038,8 +1110,6 @@ MonoBehaviour:
   _highlightMaterial: {fileID: -8395525895840582585, guid: 9eb179d63d8aa744db1a8ad8e32e0b08, type: 3}
   _renderers:
   - {fileID: 1901073129}
-  _highlightMaterials: []
-  _defaultMaterialsContainers: []
 --- !u!114 &1901073120
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1055,8 +1125,6 @@ MonoBehaviour:
   _highlightMaterial: {fileID: -8395525895840582585, guid: 9eb179d63d8aa744db1a8ad8e32e0b08, type: 3}
   _renderers:
   - {fileID: 1901073130}
-  _highlightMaterials: []
-  _defaultMaterialsContainers: []
 --- !u!114 &1901073121
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1072,8 +1140,6 @@ MonoBehaviour:
   _highlightMaterial: {fileID: -8395525895840582585, guid: 9eb179d63d8aa744db1a8ad8e32e0b08, type: 3}
   _renderers:
   - {fileID: 1901073131}
-  _highlightMaterials: []
-  _defaultMaterialsContainers: []
 --- !u!23 &1901073122 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 7865747462802911936, guid: 9eb179d63d8aa744db1a8ad8e32e0b08, type: 3}
@@ -1650,7 +1716,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &2090833075
 MonoBehaviour:
   m_ObjectHideFlags: 0
