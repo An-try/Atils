@@ -33,7 +33,5 @@ public class PoolingTest : MonoBehaviour
 
 		IPoolObject poolObject2 = _objectsPoolView.GetObject<CylinderView>();
 		IPoolObject poolObject3 = _objectsPoolView.GetObject<SphereView>();
-
-		IPoolObject poolObject4 = _objectsPoolView.GetObject(typeof(SphereView));
 	}
 }

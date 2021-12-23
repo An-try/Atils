@@ -11,23 +11,23 @@ namespace Atils.Runtime.Pooling
 {
 	public class ObjectsPoolView : PausableMonoBehaviour
 	{
-		[SerializeField] private List<PoolObject> _poolObjectPrefabs = default;
+		[SerializeField] protected List<PoolObject> _poolObjectPrefabs = default;
 
-		private DiContainer _diContainer = default;
+		protected DiContainer _diContainer = default;
 
-		private Dictionary<Type, PoolObjectsHolderView> _poolObjectsHolderViews = new Dictionary<Type, PoolObjectsHolderView>();
+		protected Dictionary<Type, PoolObjectsHolderView> _poolObjectsHolderViews = new Dictionary<Type, PoolObjectsHolderView>();
 
-		public List<PoolObject> PoolObjectPrefabs => _poolObjectPrefabs;
+		public virtual List<PoolObject> PoolObjectPrefabs => _poolObjectPrefabs;
 
 		[Inject]
-		private void Construct(DiContainer diContainer)
+		protected virtual void Construct(DiContainer diContainer)
 		{
 			_diContainer = diContainer;
 		}
 
 #if UNITY_EDITOR
 		[ContextMenu("ValidatePoolObjects")]
-		private void ValidatePoolObjects()
+		protected virtual void ValidatePoolObjects()
 		{
 			_poolObjectPrefabs = _poolObjectPrefabs.Distinct().ToList();
 		}
@@ -40,6 +40,11 @@ namespace Atils.Runtime.Pooling
 
 		protected virtual void Initialize()
 		{
+			InitializePoolObjectHolders();
+		}
+
+		protected virtual void InitializePoolObjectHolders()
+		{
 			for (int i = 0; i < _poolObjectPrefabs.Count; i++)
 			{
 				GameObject parentForPoolObjects = new GameObject(_poolObjectPrefabs[i].Name + "ObjectsPoolView");
@@ -51,7 +56,7 @@ namespace Atils.Runtime.Pooling
 
 				PlaceholderFactory<IPoolObject> factory = GenericMethodGenerator.GetGenericMethod(typeof(DiContainer), nameof(DiContainer.Resolve), _diContainer)
 					.WithBindingFlags(BindingFlags.Instance | BindingFlags.Public)
-					.SetTypeArguments(objectFactoryType)
+					.WithTypeArguments(objectFactoryType)
 					.Invoke<PlaceholderFactory<IPoolObject>>();
 
 				poolObjectsHolderView.Initialize(factory);
@@ -60,32 +65,27 @@ namespace Atils.Runtime.Pooling
 			}
 		}
 
-		public PoolObject GetObjectPrefab<T>() where T : IPoolObject
+		public virtual PoolObject GetObjectPrefab<T>() where T : IPoolObject
 		{
 			return _poolObjectPrefabs.Find(x => x.GetType() == typeof(T));
 		}
 
-		public IPoolObject GetObject<T>() where T : IPoolObject
+		public virtual IPoolObject GetObject<T>() where T : IPoolObject
 		{
 			return GetPoolObjectsHolderView<T>().GetObject<T>();
 		}
 
-		public IPoolObject GetObject(Type type)
-		{
-			return default;// GetPoolObjectsHolderView(type).GetObject(type);
-		}
-
-		public PoolObjectProvider GetObjectProvider<T>() where T : IPoolObject
+		public virtual PoolObjectProvider GetObjectProvider<T>() where T : IPoolObject
 		{
 			return new PoolObjectProvider(GetPoolObjectsHolderView<T>().GetObject<T>());
 		}
 
-		public List<IPoolObject> GetActiveObjectsOfType<T>() where T : IPoolObject
+		public virtual List<IPoolObject> GetActiveObjectsOfType<T>() where T : IPoolObject
 		{
 			return GetPoolObjectsHolderView<T>().ActiveObjects;
 		}
 
-		public List<IPoolObject> GetActiveObjects()
+		public virtual List<IPoolObject> GetActiveObjects()
 		{
 			List<IPoolObject> activeObjects = new List<IPoolObject>();
 
@@ -97,12 +97,12 @@ namespace Atils.Runtime.Pooling
 			return activeObjects;
 		}
 
-		public void ReturnToPoolObjectsOfType<T>() where T : IPoolObject
+		public virtual void ReturnToPoolObjectsOfType<T>() where T : IPoolObject
 		{
 			GetPoolObjectsHolderView<T>().ReturnToPoolObjects();
 		}
 
-		public void ReturnToPoolObjects()
+		public virtual void ReturnToPoolObjects()
 		{
 			foreach (KeyValuePair<Type, PoolObjectsHolderView> keyValuePair in _poolObjectsHolderViews)
 			{
@@ -126,7 +126,7 @@ namespace Atils.Runtime.Pooling
 			}
 		}
 
-		protected PoolObjectsHolderView GetPoolObjectsHolderView<T>()
+		protected virtual PoolObjectsHolderView GetPoolObjectsHolderView<T>()
 		{
 			return _poolObjectsHolderViews[typeof(T)];
 		}

@@ -8,7 +8,7 @@ namespace Atils.Runtime.Pooling
 {
 	public static class PoolingSystemBinder
     {
-		private static string FactoryClassName => "Factory";
+		private const string FACTORY_CLASS_NAME = "Factory";
 
 		public static void Bind(DiContainer diContainer, ObjectsPoolView objectsPoolView)
 		{
@@ -25,12 +25,12 @@ namespace Atils.Runtime.Pooling
 			for (int i = 0; i < objectsPoolView.PoolObjectPrefabs.Count; i++)
 			{
 				Type objectType = objectsPoolView.PoolObjectPrefabs[i].GetType();
-				Type objectFactoryType = objectType.GetNestedType(FactoryClassName);
+				Type objectFactoryType = objectType.GetNestedType(FACTORY_CLASS_NAME);
 				
 				if (objectFactoryType == null)
 				{
-					Debug.LogError(nameof(PoolingSystemBinder) + ": There is no nested \"" + FactoryClassName + "\" class in the \"" + objectType + "\" class. " +
-						"You need to declare the \"" + FactoryClassName + "\" class inherited from \"PlaceholderFactory<IPoolObject>\". " +
+					Debug.LogError(nameof(PoolingSystemBinder) + ": There is no nested \"" + FACTORY_CLASS_NAME + "\" class in the \"" + objectType + "\" class. " +
+						"You need to declare the \"" + FACTORY_CLASS_NAME + "\" class inherited from \"PlaceholderFactory<IPoolObject>\". " +
 						"Also check the namings.");
 					isSuccess = false;
 				}
@@ -39,7 +39,7 @@ namespace Atils.Runtime.Pooling
 
 				if (objectFactoryType != null && !(objectFactoryInstance is PlaceholderFactory<IPoolObject>))
 				{
-					Debug.LogError(nameof(PoolingSystemBinder) + ": The nested \"" + FactoryClassName + "\" class in the \"" + objectType + "\" " +
+					Debug.LogError(nameof(PoolingSystemBinder) + ": The nested \"" + FACTORY_CLASS_NAME + "\" class in the \"" + objectType + "\" " +
 						"class does not inherit from \"PlaceholderFactory<IPoolObject>\".");
 					isSuccess = false;
 				}
@@ -53,13 +53,13 @@ namespace Atils.Runtime.Pooling
 			for (int i = 0; i < objectsPoolView.PoolObjectPrefabs.Count; i++)
 			{
 				Type objectType = objectsPoolView.PoolObjectPrefabs[i].GetType();
-				Type objectFactoryType = objectType.GetNestedType(FactoryClassName);
+				Type objectFactoryType = objectType.GetNestedType(FACTORY_CLASS_NAME);
 
 				GenericMethodGenerator.GetGenericMethod(typeof(PoolingSystemBinder), nameof(BindFactoryFromComponentInNewPrefab), null)
 					.WithBindingFlags(BindingFlags.Static | BindingFlags.NonPublic)
 					.WithTypes(typeof(DiContainer), typeof(ObjectsPoolView))
-					.SetTypeArguments(objectType, objectFactoryType)
-					.SetParameters(diContainer, objectsPoolView)
+					.WithTypeArguments(objectType, objectFactoryType)
+					.WithParameters(diContainer, objectsPoolView)
 					.Invoke();
 			}
 		}
