@@ -78,5 +78,26 @@ namespace Atils.Runtime.Extensions
 		}
 
 		#endregion
+
+		#region Enumeration of items
+
+		/// <summary>
+		/// Enumerate items in the source array and perform an action on each of them.
+		/// </summary>
+		/// <typeparam name="T">Specifies the item type</typeparam>
+		/// <param name="source">The source object in which the items are enumerated</param>
+		/// <param name="action">The action to perform on each item of source array</param>
+		public static void ForEach<T>(this T[] source, Action<T> action)
+		{
+			if (source == null) throw new ArgumentNullException(nameof(source));
+			if (action == null) throw new ArgumentNullException(nameof(action));
+
+			for (int i = 0; i < source.Length; i++)
+			{
+				action?.Invoke(source[i]);
+			}
+		}
+
+		#endregion
 	}
 }
