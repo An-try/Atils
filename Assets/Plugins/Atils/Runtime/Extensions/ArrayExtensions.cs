@@ -5,6 +5,22 @@ namespace Atils.Runtime.Extensions
 {
 	public static class ArrayExtensions
 	{
+		#region Finding items
+
+		/// <summary>
+		/// Find the item that matches the predicate.
+		/// </summary>
+		/// <typeparam name="T">Specifies the item type</typeparam>
+		/// <param name="source">The source object from which to find an item</param>
+		/// <param name="match">The method that defines a set of criteria and determines whether the specified object meets those criteria</param>
+		/// <returns>The first item that matches the conditions defined by the specified predicate, if found. Otherwise, the default value for type T</returns>
+		public static T Find<T>(this T[] source, Predicate<T> match)
+		{
+			return Array.Find(source, match);
+		}
+
+		#endregion
+
 		#region Getting random items
 
 		/// <summary>
@@ -89,13 +105,7 @@ namespace Atils.Runtime.Extensions
 		/// <param name="action">The action to perform on each item of source array</param>
 		public static void ForEach<T>(this T[] source, Action<T> action)
 		{
-			if (source == null) throw new ArgumentNullException(nameof(source));
-			if (action == null) throw new ArgumentNullException(nameof(action));
-
-			for (int i = 0; i < source.Length; i++)
-			{
-				action?.Invoke(source[i]);
-			}
+			Array.ForEach(source, action);
 		}
 
 		#endregion
