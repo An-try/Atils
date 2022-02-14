@@ -9,6 +9,8 @@ namespace Atils.Runtime.Inputs
 		[SerializeField] private UnityEvent OnHideEvent = default;
 		[SerializeField] private UnityEvent OnButtonEnterEvent = default;
 		[SerializeField] private UnityEvent OnButtonExitEvent = default;
+		[SerializeField] private UnityEvent OnButtonDownEvent = default;
+		[SerializeField] private UnityEvent OnButtonUpEvent = default;
 		[SerializeField] private UnityEvent OnButtonClickEvent = default;
 
 		private bool _isShown = true;
@@ -44,6 +46,22 @@ namespace Atils.Runtime.Inputs
 			if (_isShown)
 			{
 				OnButtonExitEvent?.Invoke();
+			}
+		}
+
+		public void OnDown()
+		{
+			if (_isShown)
+			{
+				OnButtonDownEvent?.Invoke();
+			}
+		}
+
+		public void OnUp()
+		{
+			if (_isShown)
+			{
+				OnButtonUpEvent?.Invoke();
 			}
 		}
 

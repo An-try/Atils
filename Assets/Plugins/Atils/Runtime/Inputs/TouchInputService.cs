@@ -1,9 +1,10 @@
+using Atils.Runtime.WebGL;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace Atils.Runtime.Inputs
 {
-	public class TouchInputService : InputService, IInputService
+	public class TouchInputService : InputService
     {
 		private float _lastPositionX = default;
 		private float _lastPositionY = default;
@@ -14,37 +15,39 @@ namespace Atils.Runtime.Inputs
 		private bool _firstSingleTouch = false;
 		private bool _firstBothTouch = false;
 
-		public PointerHoldHandler OnPointerHoldEvent { get; set; } = default;
-        public PointerScaleHandler OnPointerScaleEvent { get; set; } = default;
-		public SpatialButtonEnterHandler OnSpatialButtonEnterEvent { get; set; } = default;
-		public SpatialButtonExitHandler OnSpatialButtonExitEvent { get; set; } = default;
-		public SpatialButtonClickHandler OnSpatialButtonClickEvent { get; set; } = default;
-
-		public float PointerPositionX => TouchCount == 1 ? GetTouch(0).position.x : 0;
-        public float PointerPositionY => TouchCount == 1 ? GetTouch(0).position.y : 0;
-        public bool IsPointerOverGameObject => TouchCount >= 1 ? EventSystem.current.IsPointerOverGameObject(0) : false;
-		public SpatialButton SpatialButtonUnderCursor { get; private set; } = default;
-		public SpatialButton PreviousSpatialButtonUnderCursor { get; private set; } = default;
-
 		public int TouchCount => UnityEngine.Input.touchCount;
 
-		private void Update()
+		public override float PointerPositionX => TouchCount == 1 ? GetTouch(0).position.x : 0;
+		public override float PointerPositionY => TouchCount == 1 ? GetTouch(0).position.y : 0;
+		public override bool IsPointerOverUIObject => TouchCount >= 1 ? IsPointerOverGameObject(0) : false;
+		public override bool IsAnyObjectSelectedAndHolding => EventSystem.current.currentSelectedGameObject != null && TouchCount > 1;
+
+		private bool _isIOS = default;
+
+		protected override void Start()
 		{
+			base.Start();
+
+			_isIOS = PlatformProvider.IsIOS();
+		}
+
+		protected override void Update()
+		{
+			base.Update();
+
 			float timeStep = Time.deltaTime;
 
-			SpatialButtonUnderCursor = DetectSpatialButtonUnderCursor();
-			PreviousSpatialButtonUnderCursor = DetectSpatialButtonEnterOrExit(SpatialButtonUnderCursor, PreviousSpatialButtonUnderCursor, OnSpatialButtonEnterEvent, OnSpatialButtonExitEvent);
-
-			#region Spatial button click
 			if (TouchCount == 1 && GetTouch(0).phase == TouchPhase.Began)
 			{
-				if (SpatialButtonUnderCursor != null)
-				{
-					SpatialButtonUnderCursor.OnClick();
-					OnSpatialButtonClickEvent?.Invoke(SpatialButtonUnderCursor);
-				}
+				OnPointerDownEvent?.Invoke(PointerPositionX, PointerPositionY);
+				DetectSpatialButtonDown();
 			}
-			#endregion
+
+			if (TouchCount == 1 && GetTouch(0).phase == TouchPhase.Ended)
+			{
+				OnPointerUpEvent?.Invoke(PointerPositionX, PointerPositionY);
+				DetectSpatialButtonUp();
+			}
 
 			if (TouchCount == 1)
 			{
@@ -57,7 +60,7 @@ namespace Atils.Runtime.Inputs
 				float differenceX = (PointerPositionX - _lastPositionX) / Screen.width;
 				float differenceY = (PointerPositionY - _lastPositionY) / Screen.height;
 
-				OnPointerHoldEvent?.Invoke(differenceX, differenceY, timeStep, 50);
+				OnPointerHoldEvent?.Invoke(differenceX, differenceY, timeStep, 150);
 
 				_lastPositionX = PointerPositionX;
 				_lastPositionY = PointerPositionY;
@@ -91,9 +94,44 @@ namespace Atils.Runtime.Inputs
 			}
 		}
 
+		protected override void DetectSpatialButtonUnderCursor()
+		{
+			if (TouchCount == 1)
+			{
+				base.DetectSpatialButtonUnderCursor();
+				return;
+			}
+
+			SpatialButtonUnderCursor = null;
+		}
+
+		protected override void DetectSpatialButtonUp()
+		{
+			SpatialButton spatialButton = TryGetSpatialButtonUnderCursor();
+
+			if (spatialButton != null && !IsPointerOverUIObject)
+			{
+				DetectSpatialButtonClick(spatialButton);
+			}
+		}
+
+		private void DetectSpatialButtonClick(SpatialButton spatialButton)
+		{
+			if (spatialButton != null && spatialButton == SpatialButtonDown)
+			{
+				spatialButton.OnClick();
+				OnSpatialButtonClickEvent?.Invoke(spatialButton);
+			}
+		}
+
+		private bool IsPointerOverGameObject(int pointerId)
+		{
+			return _isIOS ? IsPointerOverUIObjectRaycast() : EventSystem.current.IsPointerOverGameObject(pointerId);
+		}
+
 		private Touch GetTouch(int touchIndex)
 		{
 			return UnityEngine.Input.GetTouch(touchIndex);
 		}
-    }
+	}
 }
