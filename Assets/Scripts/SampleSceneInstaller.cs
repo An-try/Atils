@@ -7,27 +7,17 @@ using Zenject;
 public class SampleSceneInstaller : MonoInstaller
 {
 	[SerializeField] private ObjectsPoolView _objectsPoolView = default;
-	[SerializeField] private MouseInputService _mouseInputService = default;
-	[SerializeField] private TouchInputService _touchInputService = default;
-	[SerializeField] private ScreenService _screenService = default;
+
+	[SerializeField] private InputServicesConfig _inputServicesConfig = default;
+	[SerializeField] private ScreenServicesConfig _screenServicesConfig = default;
 
 	public override void InstallBindings()
 	{
 		// TODO save-load system
 
+		InputServiceBinder.Bind(Container, _inputServicesConfig);
+		ScreenServiceBinder.Bind(Container, _screenServicesConfig);
+
 		PoolingSystemBinder.Bind(Container, _objectsPoolView);
-
-		//if (JSLibraryProvider.IsMobile())
-		{
-			//Container.Bind<IInputService>().FromComponentInNewPrefab(_touchInputService).AsSingle().NonLazy();
-			//Debug.Log(this + " Binding touch input service.");
-		}
-		//else
-		{
-			Container.Bind<IInputService>().FromComponentInNewPrefab(_mouseInputService).AsSingle().NonLazy();
-			Debug.Log(this + " Binding mouse input service.");
-		}
-
-		Container.Bind<ScreenService>().FromComponentInNewPrefab(_screenService).AsSingle().NonLazy();
 	}
 }
