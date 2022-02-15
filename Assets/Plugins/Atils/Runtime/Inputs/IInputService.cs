@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 namespace Atils.Runtime.Inputs
 {
@@ -17,11 +18,15 @@ namespace Atils.Runtime.Inputs
 		SpatialButton SpatialButtonDown { get; }
 		SpatialButton SpatialButtonUnderCursor { get; }
 		SpatialButton PreviousSpatialButtonUnderCursor { get; }
+		bool IsPointerOverPressedSpatialButton { get; }
 		bool IsPointerOverSpatialButton { get; }
 
+		float PointerAxisX { get; }
+		float PointerAxisY { get; }
 		float PointerPositionX { get; }
 		float PointerPositionY { get; }
 		bool IsPointerOverUIObject { get; }
 		bool IsAnyObjectSelectedAndHolding { get; }
+		Vector2 PointerPosition { get; }
 	}
 }

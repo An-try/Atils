@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using Zenject;
 
 namespace Atils.Runtime.Inputs
 {
@@ -19,13 +20,20 @@ namespace Atils.Runtime.Inputs
 		public SpatialButton SpatialButtonDown { get; protected set; } = null;
 		public SpatialButton SpatialButtonUnderCursor { get; protected set; } = null;
 		public SpatialButton PreviousSpatialButtonUnderCursor { get; protected set; } = null;
+		public bool IsPointerOverPressedSpatialButton { get; private set; } = false;
 		public bool IsPointerOverSpatialButton => SpatialButtonUnderCursor != null;
 
+		public abstract float PointerAxisX { get; }
+		public abstract float PointerAxisY { get; }
 		public abstract float PointerPositionX { get; }
 		public abstract float PointerPositionY { get; }
 		public abstract bool IsPointerOverUIObject { get; }
 		public abstract bool IsAnyObjectSelectedAndHolding { get; }
+		public virtual Vector2 PointerPosition => new Vector2(PointerPositionX, PointerPositionY);
 
+		[Inject] private ScreenService _screenService = default;
+
+		private Vector2 _pointerPositionOnButtonDown = default;
 		private List<RaycastResult> _pointerOverUIRaycastResults = new List<RaycastResult>();
 
 		protected virtual void Start()
@@ -49,6 +57,8 @@ namespace Atils.Runtime.Inputs
 				SpatialButtonDown = SpatialButtonUnderCursor;
 				SpatialButtonDown.OnDown();
 				OnSpatialButtonDownEvent?.Invoke(SpatialButtonDown);
+				_pointerPositionOnButtonDown = PointerPosition;
+				IsPointerOverPressedSpatialButton = true;
 			}
 		}
 
@@ -65,7 +75,7 @@ namespace Atils.Runtime.Inputs
 
 		protected virtual void DetectSpatialButtonClick()
 		{
-			if (SpatialButtonUnderCursor == SpatialButtonDown)
+			if (SpatialButtonUnderCursor == SpatialButtonDown && IsPointerOverPressedSpatialButton)
 			{
 				SpatialButtonUnderCursor.OnClick();
 				OnSpatialButtonClickEvent?.Invoke(SpatialButtonUnderCursor);
@@ -103,6 +113,7 @@ namespace Atils.Runtime.Inputs
 				{
 					PreviousSpatialButtonUnderCursor.OnExit();
 					OnSpatialButtonExitEvent?.Invoke(PreviousSpatialButtonUnderCursor);
+					IsPointerOverPressedSpatialButton = false;
 				}
 
 				if (SpatialButtonUnderCursor != null)
@@ -125,6 +136,15 @@ namespace Atils.Runtime.Inputs
 			_pointerOverUIRaycastResults.Clear();
 
 			return raycastResultsCount > 0;
+		}
+
+		protected void HandlePointerOverPressedSpatialButton()
+		{
+			if (IsPointerOverPressedSpatialButton &&
+				Vector2.Distance(PointerPosition, _pointerPositionOnButtonDown) > _screenService.ScreenTotalSize / 50)
+			{
+				IsPointerOverPressedSpatialButton = false;
+			}
 		}
 	}
 }

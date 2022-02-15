@@ -17,6 +17,8 @@ namespace Atils.Runtime.Inputs
 
 		public int TouchCount => UnityEngine.Input.touchCount;
 
+		public override float PointerAxisX => TouchCount == 1 ? GetTouch(0).deltaPosition.x : 0;
+		public override float PointerAxisY => TouchCount == 1 ? GetTouch(0).deltaPosition.y : 0;
 		public override float PointerPositionX => TouchCount == 1 ? GetTouch(0).position.x : 0;
 		public override float PointerPositionY => TouchCount == 1 ? GetTouch(0).position.y : 0;
 		public override bool IsPointerOverUIObject => TouchCount >= 1 ? IsPointerOverGameObject(0) : false;
@@ -61,6 +63,7 @@ namespace Atils.Runtime.Inputs
 				float differenceY = (PointerPositionY - _lastPositionY) / Screen.height;
 
 				OnPointerHoldEvent?.Invoke(differenceX, differenceY, timeStep, 150);
+				HandlePointerOverPressedSpatialButton();
 
 				_lastPositionX = PointerPositionX;
 				_lastPositionY = PointerPositionY;
