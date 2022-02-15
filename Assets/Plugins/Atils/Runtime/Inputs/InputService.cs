@@ -1,3 +1,4 @@
+using Atils.Runtime.ScreenUtils;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -31,7 +32,7 @@ namespace Atils.Runtime.Inputs
 		public abstract bool IsAnyObjectSelectedAndHolding { get; }
 		public virtual Vector2 PointerPosition => new Vector2(PointerPositionX, PointerPositionY);
 
-		[Inject] private ScreenService _screenService = default;
+		[Inject] private IScreenService _screenService = default;
 
 		private Vector2 _pointerPositionOnButtonDown = default;
 		private List<RaycastResult> _pointerOverUIRaycastResults = new List<RaycastResult>();

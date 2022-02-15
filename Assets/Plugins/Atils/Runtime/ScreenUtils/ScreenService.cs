@@ -3,7 +3,7 @@ using Zenject;
 
 namespace Atils.Runtime.ScreenUtils
 {
-	public class ScreenService : MonoBehaviour
+	public class ScreenService : MonoBehaviour, IScreenService
 	{
 		public ScreenSizeChangedHandler ScreenSizeChangedEvent { get; set; } = default;
 
