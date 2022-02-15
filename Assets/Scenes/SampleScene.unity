@@ -424,6 +424,7 @@ MonoBehaviour:
   _objectsPoolView: {fileID: 9206773147991449540, guid: 72c0f1314a982fc45b1e3fd5cb2a7133, type: 3}
   _mouseInputService: {fileID: 2728311515855508321, guid: 8465edd1e7b96ad41bb7a4ade4f0f71b, type: 3}
   _touchInputService: {fileID: 2272664322319790987, guid: 5fb162ac9e3cae24a8a9714bf03e08ce, type: 3}
+  _screenService: {fileID: 8772507267430538339, guid: 718f9a19a214244499679b16f45458e1, type: 3}
 --- !u!1 &1211827617
 GameObject:
   m_ObjectHideFlags: 0
