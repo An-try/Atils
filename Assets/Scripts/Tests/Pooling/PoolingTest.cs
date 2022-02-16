@@ -27,9 +27,9 @@ public class PoolingTest : MonoBehaviour
 	{
 		yield return new WaitForSeconds(5);
 
-		for (int i = 0; i < 1000; i++)
+		for (int i = 0; i < 10000; i++)
 		{
-			//for (int j = 0; j < 30; j++)
+			for (int j = 0; j < 30; j++)
 			{
 				//_objectsPoolView.GetObject<SphereView>();
 				_objectsPoolView.GetObjectProvider<SphereView>().SetPosition(new Vector3()).GetObject();
