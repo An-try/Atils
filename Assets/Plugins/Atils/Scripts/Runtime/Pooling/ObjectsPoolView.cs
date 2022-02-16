@@ -70,14 +70,14 @@ namespace Atils.Runtime.Pooling
 			return _poolObjectPrefabs.Find(x => x.GetType() == typeof(T));
 		}
 
-		public virtual IPoolObject GetObject<T>() where T : IPoolObject
+		public virtual T GetObject<T>() where T : IPoolObject
 		{
 			return GetPoolObjectsHolderView<T>().GetObject<T>();
 		}
 
-		public virtual PoolObjectProvider GetObjectProvider<T>() where T : IPoolObject
+		public virtual PoolObjectProvider<T> GetObjectProvider<T>() where T : IPoolObject
 		{
-			return new PoolObjectProvider(GetPoolObjectsHolderView<T>().GetObject<T>());
+			return new PoolObjectProvider<T>(GetPoolObjectsHolderView<T>().GetObject<T>());
 		}
 
 		public virtual List<IPoolObject> GetActiveObjectsOfType<T>() where T : IPoolObject

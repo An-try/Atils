@@ -8,12 +8,16 @@ namespace Atils.Runtime.Pooling
 {
 	public abstract class PoolObject : PausableMonoBehaviour, IPoolObject
     {
+		public Action<IPoolObject> OnReturnedToPool { get; set; }
+
 		private Coroutine _returnToPoolCoroutine = default;
 
 		public string Name { get => name; set => name = value; }
-		public bool IsActiveInPool => gameObject.activeSelf;
 		public GameObject GameObject => gameObject;
 		public Transform Transform => transform;
+
+		public virtual void Initialize()
+		{ }
 
 		//public virtual void Initialize(IInitializeData initializeData)
 		//{
@@ -42,6 +46,7 @@ namespace Atils.Runtime.Pooling
 			gameObject.SetActive(false);
 			ResetObject();
 			onReturnedToPool?.Invoke();
+			OnReturnedToPool?.Invoke(this);
 		}
 
 		public virtual void ReturnToPool(float delay, Action onFinish = null)
@@ -79,6 +84,11 @@ namespace Atils.Runtime.Pooling
 			yield return new PausableWaitForSeconds(delay, () => IsPaused);
 
 			ReturnToPool(onFinish);
+		}
+
+		protected virtual void OnDestroy()
+		{
+			OnReturnedToPool = null;
 		}
 	}
 }

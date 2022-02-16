@@ -1,5 +1,6 @@
 using Atils.Runtime.Pause;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Zenject;
 
@@ -9,62 +10,70 @@ namespace Atils.Runtime.Pooling
 	{
 		private PlaceholderFactory<IPoolObject> _factory = default;
 
-		private List<IPoolObject> _poolObjects = new List<IPoolObject>();
+		private List<IPoolObject> _enabledPoolObjects = new List<IPoolObject>();
+		private List<IPoolObject> _disabledPoolObjects = new List<IPoolObject>();
 
-		public List<IPoolObject> ActiveObjects => _poolObjects.FindAll(x => x.IsActiveInPool);
+		public List<IPoolObject> ActiveObjects => _enabledPoolObjects.Concat(_disabledPoolObjects).ToList();
 
 		public void Initialize(PlaceholderFactory<IPoolObject> factory)
 		{
 			_factory = factory;
 		}
 
-		public IPoolObject GetObject<T>() where T : IPoolObject
+		private void FixedUpdate()
+		{
+			float timeStep = Time.fixedDeltaTime;
+
+			for (int i = 0; i < _enabledPoolObjects.Count; i++)
+			{
+				_enabledPoolObjects[i].UpdateObject(timeStep);
+			}
+		}
+
+		public T GetObject<T>() where T : IPoolObject
 		{
 			return GetAvailableObjectOrCreateNew<T>();
 		}
 
 		public void ReturnToPoolObjects()
 		{
-			for (int i = 0; i < _poolObjects.Count; i++)
+			while (_enabledPoolObjects.Count > 0)
 			{
-				_poolObjects[i].ReturnToPool();
+				_enabledPoolObjects[_enabledPoolObjects.Count - 1].ReturnToPool();
 			}
+			_enabledPoolObjects.Clear();
 		}
 
 		protected override void OnPaused()
 		{
-			for (int i = 0; i < _poolObjects.Count; i++)
+			foreach (IPoolObject poolObject in _enabledPoolObjects)
 			{
-				if (_poolObjects[i].IsActiveInPool)
-				{
-					_poolObjects[i].Pause();
-				}
+				poolObject.Pause();
 			}
 		}
 
 		protected override void OnUnpaused()
 		{
-			for (int i = 0; i < _poolObjects.Count; i++)
+			foreach (IPoolObject poolObject in _enabledPoolObjects)
 			{
-				if (_poolObjects[i].IsActiveInPool)
-				{
-					_poolObjects[i].Unpause();
-				}
+				poolObject.Unpause();
 			}
 		}
 
-		private IPoolObject GetAvailableObjectOrCreateNew<T>() where T : IPoolObject
+		private void OnObjectReturnedToPool(IPoolObject poolObject)
 		{
-			for (int i = 0; i < _poolObjects.Count; i++)
+			_enabledPoolObjects.Remove(poolObject);
+			_disabledPoolObjects.Add(poolObject);
+		}
+
+		private T GetAvailableObjectOrCreateNew<T>() where T : IPoolObject
+		{
+			if (_disabledPoolObjects.Count > 0)
 			{
-				if (!_poolObjects[i].IsActiveInPool)
-				{
-					return InitializePoolObject(_poolObjects[i]);
-				}
+				return (T)InitializePoolObjectAtEnd(_disabledPoolObjects[_disabledPoolObjects.Count - 1]);
 			}
 
-			IPoolObject poolObject = AddObject<T>(typeof(T).ToString(), transform);
-			return InitializePoolObject(poolObject);
+			return (T)InitializePoolObjectAtEnd(AddObject<T>(typeof(T).ToString(), transform));
 		}
 
 		private IPoolObject AddObject<T>(string objectName, Transform objectParent = null) where T : IPoolObject
@@ -75,15 +84,19 @@ namespace Atils.Runtime.Pooling
 			poolObject.Name = objectName;
 			poolObject.Transform.SetParent(parent);
 			poolObject.GameObject.SetActive(false);
+			poolObject.OnReturnedToPool += OnObjectReturnedToPool;
 
-			_poolObjects.Add(poolObject);
+			_disabledPoolObjects.Add(poolObject);
 			return poolObject;
 		}
 
-		private IPoolObject InitializePoolObject(IPoolObject poolObject)
+		private T InitializePoolObjectAtEnd<T>(T poolObject) where T : IPoolObject
 		{
 			// TODO
 			poolObject.GameObject.SetActive(true);
+			poolObject.Initialize();
+			_disabledPoolObjects.RemoveAt(_disabledPoolObjects.Count - 1);
+			_enabledPoolObjects.Add(poolObject);
 
 			if (IsPaused)
 			{

@@ -2,39 +2,39 @@ using UnityEngine;
 
 namespace Atils.Runtime.Pooling
 {
-	public class PoolObjectProvider
+	public class PoolObjectProvider<T> where T : IPoolObject
 	{
-		public readonly IPoolObject PoolObject = default;
+		public readonly T PoolObject = default;
 
-		public PoolObjectProvider(IPoolObject poolObject)
+		public PoolObjectProvider(T poolObject)
 		{
 			PoolObject = poolObject;
 		}
 
-		public IPoolObject GetObject()
+		public T GetObject()
 		{
 			return PoolObject;
 		}
 
-		public PoolObjectProvider SetPosition(Vector3 position)
+		public PoolObjectProvider<T> SetPosition(Vector3 position)
 		{
 			PoolObject.Transform.position = position;
 			return this;
 		}
 
-		public PoolObjectProvider SetRotation(Quaternion rotation)
+		public PoolObjectProvider<T> SetRotation(Quaternion rotation)
 		{
 			PoolObject.Transform.rotation = rotation;
 			return this;
 		}
 
-		public PoolObjectProvider SetLocalScale(Vector3 localScale)
+		public PoolObjectProvider<T> SetLocalScale(Vector3 localScale)
 		{
 			PoolObject.Transform.localScale = localScale;
 			return this;
 		}
 
-		public PoolObjectProvider SetParent(Transform parent)
+		public PoolObjectProvider<T> SetParent(Transform parent)
 		{
 			PoolObject.Transform.SetParent(parent);
 			return this;
