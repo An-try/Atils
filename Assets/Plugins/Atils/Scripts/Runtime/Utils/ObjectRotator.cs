@@ -136,11 +136,8 @@ namespace EllanceChapter2.Runtime.Utils
 			OnRotatedEvent?.Invoke();
 		}
 
-		private void TryRotateObject(float pointerX, float pointerY, float timeStep, float multiplier = 1)
+		private void TryRotateObject(float pointerAxisX, float pointerAxisY, float timeStep, float multiplier = 1)
 		{
-			pointerX = _inputService.PointerAxisX;
-			pointerY = _inputService.PointerAxisY;
-
 			if (!_allowRotation ||
 				_inputService.IsPointerOverPressedSpatialButton ||
 				_inputService.IsPointerOverUIObject ||
@@ -149,7 +146,7 @@ namespace EllanceChapter2.Runtime.Utils
 				return;
 			}
 
-			RotateObject(pointerX, pointerY, timeStep, multiplier);
+			RotateObject(pointerAxisX, pointerAxisY, timeStep, multiplier);
 		}
 
 		private void KillCoroutine(ref Coroutine coroutine)
