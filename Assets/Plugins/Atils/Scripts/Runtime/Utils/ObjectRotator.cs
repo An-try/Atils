@@ -4,7 +4,7 @@ using System.Collections;
 using UnityEngine;
 using Zenject;
 
-namespace EllanceChapter2.Runtime.Utils
+namespace Atils.Runtime.Utils
 {
 	public class ObjectRotator : MonoBehaviour
 	{
@@ -139,8 +139,8 @@ namespace EllanceChapter2.Runtime.Utils
 		private void TryRotateObject(float pointerAxisX, float pointerAxisY, float timeStep, float multiplier = 1)
 		{
 			if (!_allowRotation ||
-				_inputService.IsPointerOverPressedSpatialButton ||
 				_inputService.IsPointerOverUIObject ||
+				_inputService.IsPointerOverPressedSpatialButton ||
 				_inputService.IsAnyObjectSelectedAndHolding)
 			{
 				return;

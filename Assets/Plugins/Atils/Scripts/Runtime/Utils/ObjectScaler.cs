@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 
-namespace EllanceChapter2.Runtime.Utils
+namespace Atils.Runtime.Utils
 {
 	public class ObjectScaler : MonoBehaviour
 	{
