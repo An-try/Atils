@@ -8,6 +8,8 @@ namespace Atils.Runtime.Inputs
 {
 	public abstract class InputService : MonoBehaviour, IInputService
 	{
+		public abstract string Name { get; }
+
 		public PointerDownHandler OnPointerDownEvent { get; set; } = default;
 		public PointerUpHandler OnPointerUpEvent { get; set; } = default;
 		public PointerHoldHandler OnPointerHoldEvent { get; set; } = default;

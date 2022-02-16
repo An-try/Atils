@@ -1,4 +1,3 @@
-using Atils.Runtime.WebGL;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -6,6 +5,8 @@ namespace Atils.Runtime.Inputs
 {
 	public class TouchInputService : InputService
     {
+		public override string Name => "Touch input service";
+
 		private float _lastPositionX = default;
 		private float _lastPositionY = default;
 
@@ -21,17 +22,8 @@ namespace Atils.Runtime.Inputs
 		public override float PointerAxisY => TouchCount == 1 ? GetTouch(0).deltaPosition.y : 0;
 		public override float PointerPositionX => TouchCount == 1 ? GetTouch(0).position.x : 0;
 		public override float PointerPositionY => TouchCount == 1 ? GetTouch(0).position.y : 0;
-		public override bool IsPointerOverUIObject => TouchCount >= 1 ? IsPointerOverGameObject(0) : false;
+		public override bool IsPointerOverUIObject => TouchCount >= 1 ? IsPointerOverUIObjectRaycast() : false;
 		public override bool IsAnyObjectSelectedAndHolding => EventSystem.current.currentSelectedGameObject != null && TouchCount > 1;
-
-		private bool _isIOS = default;
-
-		protected override void Start()
-		{
-			base.Start();
-
-			_isIOS = PlatformProvider.IsIOS();
-		}
 
 		protected override void Update()
 		{
@@ -120,16 +112,11 @@ namespace Atils.Runtime.Inputs
 
 		private void DetectSpatialButtonClick(SpatialButton spatialButton)
 		{
-			if (spatialButton != null && spatialButton == SpatialButtonDown)
+			if (spatialButton != null && spatialButton == SpatialButtonDown && IsPointerOverPressedSpatialButton)
 			{
 				spatialButton.OnClick();
 				OnSpatialButtonClickEvent?.Invoke(spatialButton);
 			}
-		}
-
-		private bool IsPointerOverGameObject(int pointerId)
-		{
-			return _isIOS ? IsPointerOverUIObjectRaycast() : EventSystem.current.IsPointerOverGameObject(pointerId);
 		}
 
 		private Touch GetTouch(int touchIndex)

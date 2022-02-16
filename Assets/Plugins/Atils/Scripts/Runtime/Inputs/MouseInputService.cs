@@ -5,13 +5,15 @@ namespace Atils.Runtime.Inputs
 {
 	public class MouseInputService : InputService
 	{
+		public override string Name => "Mouse input service";
+
 		public bool IsMouseLeftHolding => UnityEngine.Input.GetKey(KeyCode.Mouse0);
 
 		public override float PointerAxisX => UnityEngine.Input.GetAxis("Mouse X");
 		public override float PointerAxisY => UnityEngine.Input.GetAxis("Mouse Y");
 		public override float PointerPositionX => UnityEngine.Input.mousePosition.x;
 		public override float PointerPositionY => UnityEngine.Input.mousePosition.y;
-		public override bool IsPointerOverUIObject => EventSystem.current.IsPointerOverGameObject();
+		public override bool IsPointerOverUIObject => IsPointerOverUIObjectRaycast();
 		public override bool IsAnyObjectSelectedAndHolding => EventSystem.current.currentSelectedGameObject != null && IsMouseLeftHolding;
 
 		protected override void Update()
@@ -34,7 +36,7 @@ namespace Atils.Runtime.Inputs
 
 			if (IsMouseLeftHolding)
 			{
-				OnPointerHoldEvent?.Invoke(PointerPositionX, PointerPositionY, timeStep);
+				OnPointerHoldEvent?.Invoke(PointerAxisX, PointerAxisY, timeStep);
 				HandlePointerOverPressedSpatialButton();
 			}
 

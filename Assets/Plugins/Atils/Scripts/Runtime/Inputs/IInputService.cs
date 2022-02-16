@@ -5,6 +5,8 @@ namespace Atils.Runtime.Inputs
 {
 	public interface IInputService
 	{
+		string Name { get; }
+
 		PointerDownHandler OnPointerDownEvent { get; set; }
 		PointerUpHandler OnPointerUpEvent { get; set; }
 		PointerHoldHandler OnPointerHoldEvent { get; set; }
