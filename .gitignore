@@ -61,7 +61,8 @@ sysinfo.txt
 # Builds
 *.apk
 *.aab
-*.unitypackage
+*.unitypackage			# Ignore .unitypackage files
+!UnityPackages/*.unitypackage	# Except files in the UnityPackages folder
 
 # Crashlytics generated file
 crashlytics-build.properties

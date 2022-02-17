@@ -1,7 +1,7 @@
-using Newtonsoft.Json;
 using System.Collections;
 using System.IO;
 using System.Linq;
+using Unity.Plastic.Newtonsoft.Json;
 using UnityEngine;
 
 namespace Atils.Runtime.DataManagement
