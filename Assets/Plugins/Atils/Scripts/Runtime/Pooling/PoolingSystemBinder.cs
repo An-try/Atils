@@ -7,7 +7,7 @@ using Zenject;
 namespace Atils.Runtime.Pooling
 {
 	public static class PoolingSystemBinder
-    {
+	{
 		private const string FACTORY_CLASS_NAME = "Factory";
 
 		public static void Bind(DiContainer diContainer, ObjectsPoolView objectsPoolView)
@@ -26,7 +26,7 @@ namespace Atils.Runtime.Pooling
 			{
 				Type objectType = objectsPoolView.PoolObjectPrefabs[i].GetType();
 				Type objectFactoryType = objectType.GetNestedType(FACTORY_CLASS_NAME);
-				
+
 				if (objectFactoryType == null)
 				{
 					Debug.LogError(nameof(PoolingSystemBinder) + ": There is no nested \"" + FACTORY_CLASS_NAME + "\" class in the \"" + objectType + "\" class. " +

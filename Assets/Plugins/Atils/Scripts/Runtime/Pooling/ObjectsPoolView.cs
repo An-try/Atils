@@ -1,3 +1,4 @@
+using Atils.Runtime.Extensions;
 using Atils.Runtime.Generics;
 using Atils.Runtime.Pause;
 using System;
@@ -59,7 +60,7 @@ namespace Atils.Runtime.Pooling
 					.WithTypeArguments(objectFactoryType)
 					.Invoke<PlaceholderFactory<IPoolObject>>();
 
-				poolObjectsHolderView.Initialize(factory);
+				poolObjectsHolderView.Initialize(factory, _poolObjectPrefabs[i].Name);
 
 				_poolObjectsHolderViews.Add(objectType, poolObjectsHolderView);
 			}
@@ -72,12 +73,17 @@ namespace Atils.Runtime.Pooling
 
 		public virtual T GetObject<T>() where T : IPoolObject
 		{
-			return GetPoolObjectsHolderView<T>().GetObject<T>();
+			return (T)GetPoolObjectsHolderView<T>().GetObject();
+		}
+
+		public virtual T GetRandomObject<T>() where T : IPoolObject
+		{
+			return (T)GetPoolObjectsHolderViews<T>().GetRandom().GetObject();
 		}
 
 		public virtual PoolObjectProvider<T> GetObjectProvider<T>() where T : IPoolObject
 		{
-			return new PoolObjectProvider<T>(GetPoolObjectsHolderView<T>().GetObject<T>());
+			return new PoolObjectProvider<T>((T)GetPoolObjectsHolderView<T>().GetObject());
 		}
 
 		public virtual List<IPoolObject> GetActiveObjectsOfType<T>() where T : IPoolObject
@@ -129,6 +135,21 @@ namespace Atils.Runtime.Pooling
 		protected virtual PoolObjectsHolderView GetPoolObjectsHolderView<T>()
 		{
 			return _poolObjectsHolderViews[typeof(T)];
+		}
+
+		protected virtual List<PoolObjectsHolderView> GetPoolObjectsHolderViews<T>()
+		{
+			List<PoolObjectsHolderView> poolObjectsHolderViews = new List<PoolObjectsHolderView>();
+
+			foreach (KeyValuePair<Type, PoolObjectsHolderView> keyValuePair in _poolObjectsHolderViews)
+			{
+				if (keyValuePair.Key is T)
+				{
+					poolObjectsHolderViews.Add(keyValuePair.Value);
+				}
+			}
+
+			return poolObjectsHolderViews;
 		}
 	}
 }

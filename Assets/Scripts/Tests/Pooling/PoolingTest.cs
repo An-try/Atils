@@ -32,7 +32,8 @@ public class PoolingTest : MonoBehaviour
 			for (int j = 0; j < 30; j++)
 			{
 				//_objectsPoolView.GetObject<SphereView>();
-				_objectsPoolView.GetObjectProvider<SphereView>().SetPosition(new Vector3()).GetObject();
+				//_objectsPoolView.GetObjectProvider<SphereView>().SetPosition(new Vector3()).GetObject();
+				SphereView sphereView = (SphereView)_objectsPoolView.GetObject<SphereView>().SetPosition(new Vector3());
 				//SphereView sphereView = _objectsPoolView.GetObjectProvider<SphereView>().SetPosition(new Vector3()).GetObject();
 
 				//float random = 10;
