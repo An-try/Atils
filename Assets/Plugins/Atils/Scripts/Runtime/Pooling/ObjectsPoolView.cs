@@ -81,11 +81,6 @@ namespace Atils.Runtime.Pooling
 			return (T)GetPoolObjectsHolderViews<T>().GetRandom().GetObject();
 		}
 
-		public virtual PoolObjectProvider<T> GetObjectProvider<T>() where T : IPoolObject
-		{
-			return new PoolObjectProvider<T>((T)GetPoolObjectsHolderView<T>().GetObject());
-		}
-
 		public virtual List<IPoolObject> GetActiveObjectsOfType<T>() where T : IPoolObject
 		{
 			return GetPoolObjectsHolderView<T>().ActiveObjects;
@@ -103,7 +98,7 @@ namespace Atils.Runtime.Pooling
 			return activeObjects;
 		}
 
-		public virtual void ReturnToPoolObjectsOfType<T>() where T : IPoolObject
+		public virtual void ReturnToPoolObjects<T>() where T : IPoolObject
 		{
 			GetPoolObjectsHolderView<T>().ReturnToPoolObjects();
 		}
@@ -143,7 +138,7 @@ namespace Atils.Runtime.Pooling
 
 			foreach (KeyValuePair<Type, PoolObjectsHolderView> keyValuePair in _poolObjectsHolderViews)
 			{
-				if (keyValuePair.Key is T)
+				if (keyValuePair.Key.IsSubclassOf(typeof(T)) || keyValuePair.Key == typeof(T))
 				{
 					poolObjectsHolderViews.Add(keyValuePair.Value);
 				}

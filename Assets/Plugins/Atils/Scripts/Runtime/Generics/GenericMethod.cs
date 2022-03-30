@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace Atils.Runtime.Generics
 {
-	public class GenericMethodProvider
+	public class GenericMethod
 	{
 		// https://referencesource.microsoft.com/#mscorlib/system/type.cs,747b1a12f39d3a0d
 		private const BindingFlags DEFAULT_LOOKUP = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public;
@@ -33,7 +33,7 @@ namespace Atils.Runtime.Generics
 
 		#endregion
 
-		public GenericMethodProvider(Type sourceClassType, string methodName, object sourceClassInstance)
+		public GenericMethod(Type sourceClassType, string methodName, object sourceClassInstance)
 		{
 			_sourceClassType = sourceClassType;
 			_methodName = methodName;
@@ -54,43 +54,43 @@ namespace Atils.Runtime.Generics
 
 		#region Chain methods
 
-		public GenericMethodProvider WithBindingFlags(BindingFlags bindingAttr)
+		public GenericMethod WithBindingFlags(BindingFlags bindingAttr)
 		{
 			_bindingAttr = bindingAttr;
 			return this;
 		}
 
-		public GenericMethodProvider WithBinder(Binder binder)
+		public GenericMethod WithBinder(Binder binder)
 		{
 			_binder = binder;
 			return this;
 		}
 
-		public GenericMethodProvider WithCallingConventions(CallingConventions callConvention)
+		public GenericMethod WithCallingConventions(CallingConventions callConvention)
 		{
 			_callConvention = callConvention;
 			return this;
 		}
 
-		public GenericMethodProvider WithTypes(params Type[] types)
+		public GenericMethod WithTypes(params Type[] types)
 		{
 			_types = types;
 			return this;
 		}
 
-		public GenericMethodProvider WithParameterModifiers(params ParameterModifier[] modifiers)
+		public GenericMethod WithParameterModifiers(params ParameterModifier[] modifiers)
 		{
 			_modifiers = modifiers;
 			return this;
 		}
 
-		public GenericMethodProvider WithTypeArguments(params Type[] typeArguments)
+		public GenericMethod WithTypeArguments(params Type[] typeArguments)
 		{
 			_typeArguments = typeArguments;
 			return this;
 		}
 
-		public GenericMethodProvider WithParameters(params object[] parameters)
+		public GenericMethod WithParameters(params object[] parameters)
 		{
 			_parameters = parameters;
 			return this;

@@ -32,9 +32,9 @@ public class PoolingTest : MonoBehaviour
 			for (int j = 0; j < 30; j++)
 			{
 				//_objectsPoolView.GetObject<SphereView>();
-				//_objectsPoolView.GetObjectProvider<SphereView>().SetPosition(new Vector3()).GetObject();
-				SphereView sphereView = (SphereView)_objectsPoolView.GetObject<SphereView>().SetPosition(new Vector3());
-				//SphereView sphereView = _objectsPoolView.GetObjectProvider<SphereView>().SetPosition(new Vector3()).GetObject();
+				SphereView sphereView1 = (SphereView)_objectsPoolView.GetObject<SphereView>();
+				SphereView sphereView2 = (SphereView)_objectsPoolView.GetObject<SphereView>().SetPosition(new Vector3());
+				PoolObject poolObject = (PoolObject)_objectsPoolView.GetRandomObject<PoolObject>().SetPosition(new Vector3());
 
 				//float random = 10;
 
@@ -58,16 +58,14 @@ public class PoolingTest : MonoBehaviour
 
 		return;
 
-		IPoolObject poolObject1 = _objectsPoolView.GetObjectProvider<CubeView>()
+		IPoolObject poolObject1 = _objectsPoolView.GetObject<CubeView>()
 			.SetPosition(new Vector3(1, 1, -1))
 			.SetLocalScale(new Vector3(1, 0.5f, 1))
-			.SetParent(null)
-			.GetObject();
+			.SetParent(null);
 
-		_objectsPoolView.GetObjectProvider<CubeView>()
+		_objectsPoolView.GetObject<CubeView>()
 			.SetPosition(new Vector3(1, 1, 1))
-			.SetParent(null)
-			.GetObject();
+			.SetParent(null);
 
 		IPoolObject poolObject2 = _objectsPoolView.GetObject<CylinderView>();
 
@@ -90,7 +88,7 @@ public class PoolingTest : MonoBehaviour
 
 		stopwatch = new Stopwatch();
 		stopwatch = Stopwatch.StartNew();
-		_objectsPoolView.ReturnToPoolObjectsOfType<SphereView>();
+		_objectsPoolView.ReturnToPoolObjects<SphereView>();
 		stopwatch.Stop();
 		UnityEngine.Debug.Log("ReturnToPoolObjectsOfType: " + stopwatch.Elapsed.TotalSeconds);
 
@@ -111,7 +109,7 @@ public class PoolingTest : MonoBehaviour
 
 		stopwatch = new Stopwatch();
 		stopwatch = Stopwatch.StartNew();
-		_objectsPoolView.ReturnToPoolObjectsOfType<SphereView>();
+		_objectsPoolView.ReturnToPoolObjects<SphereView>();
 		stopwatch.Stop();
 		UnityEngine.Debug.Log("ReturnToPoolObjectsOfType: " + stopwatch.Elapsed.TotalSeconds);
 
@@ -132,7 +130,7 @@ public class PoolingTest : MonoBehaviour
 
 		stopwatch = new Stopwatch();
 		stopwatch = Stopwatch.StartNew();
-		_objectsPoolView.ReturnToPoolObjectsOfType<SphereView>();
+		_objectsPoolView.ReturnToPoolObjects<SphereView>();
 		stopwatch.Stop();
 		UnityEngine.Debug.Log("ReturnToPoolObjectsOfType: " + stopwatch.Elapsed.TotalSeconds);
 
@@ -202,7 +200,7 @@ public class PoolingTest : MonoBehaviour
 
 		stopwatch = new Stopwatch();
 		stopwatch = Stopwatch.StartNew();
-		_objectsPoolView.ReturnToPoolObjectsOfType<SphereView>();
+		_objectsPoolView.ReturnToPoolObjects<SphereView>();
 		stopwatch.Stop();
 		UnityEngine.Debug.Log("ReturnToPoolObjectsOfType: " + stopwatch.Elapsed.TotalSeconds);
 
