@@ -1,7 +1,7 @@
 using System.Collections;
 using System.IO;
 using System.Linq;
-using Unity.Plastic.Newtonsoft.Json;
+//using Unity.Plastic.Newtonsoft.Json;
 using UnityEngine;
 
 namespace Atils.Runtime.DataManagement
@@ -12,17 +12,17 @@ namespace Atils.Runtime.DataManagement
 
 
 
-        public static void SaveData(object value, JsonWriter writer)
-        {
-            var obj = value as IEnumerable;
+        //public static void SaveData(object value, JsonWriter writer)
+        //{
+        //    var obj = value as IEnumerable;
 
-            var tuples = obj.Cast<object>().Select(UnpackUnknownObject);
+        //    var tuples = obj.Cast<object>().Select(UnpackUnknownObject);
 
-            object[] dataArray = (from dp in tuples select new[] { dp, }).ToArray();
+        //    object[] dataArray = (from dp in tuples select new[] { dp, }).ToArray();
 
-            var serializer = new JsonSerializer();
-            serializer.Serialize(writer, dataArray);
-        }
+        //    var serializer = new JsonSerializer();
+        //    serializer.Serialize(writer, dataArray);
+        //}
 
         public static object UnpackUnknownObject(object @object)
         {

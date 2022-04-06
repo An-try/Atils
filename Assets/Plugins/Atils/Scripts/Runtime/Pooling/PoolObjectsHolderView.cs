@@ -9,15 +9,17 @@ namespace Atils.Runtime.Pooling
 	public class PoolObjectsHolderView : PausableMonoBehaviour
 	{
 		private PlaceholderFactory<IPoolObject> _factory = default;
+		private string _poolObjectName = default;
 
 		private List<IPoolObject> _enabledPoolObjects = new List<IPoolObject>();
 		private List<IPoolObject> _disabledPoolObjects = new List<IPoolObject>();
 
 		public List<IPoolObject> ActiveObjects => _enabledPoolObjects.Concat(_disabledPoolObjects).ToList();
 
-		public void Initialize(PlaceholderFactory<IPoolObject> factory)
+		public void Initialize(PlaceholderFactory<IPoolObject> factory, string poolObjectName)
 		{
 			_factory = factory;
+			_poolObjectName = poolObjectName;
 		}
 
 		private void FixedUpdate()
@@ -30,9 +32,9 @@ namespace Atils.Runtime.Pooling
 			}
 		}
 
-		public T GetObject<T>() where T : IPoolObject
+		public IPoolObject GetObject()
 		{
-			return GetAvailableObjectOrCreateNew<T>();
+			return GetAvailableObjectOrCreateNew();
 		}
 
 		public void ReturnToPoolObjects()
@@ -66,22 +68,22 @@ namespace Atils.Runtime.Pooling
 			_disabledPoolObjects.Add(poolObject);
 		}
 
-		private T GetAvailableObjectOrCreateNew<T>() where T : IPoolObject
+		private IPoolObject GetAvailableObjectOrCreateNew()
 		{
 			if (_disabledPoolObjects.Count > 0)
 			{
-				return (T)InitializePoolObjectAtEnd(_disabledPoolObjects[_disabledPoolObjects.Count - 1]);
+				return InitializePoolObjectAtEnd(_disabledPoolObjects[_disabledPoolObjects.Count - 1]);
 			}
 
-			return (T)InitializePoolObjectAtEnd(AddObject<T>(typeof(T).ToString(), transform));
+			return InitializePoolObjectAtEnd(AddObject(transform));
 		}
 
-		private IPoolObject AddObject<T>(string objectName, Transform objectParent = null) where T : IPoolObject
+		private IPoolObject AddObject(Transform objectParent = null)
 		{
 			Transform parent = objectParent == null ? transform : objectParent;
 			IPoolObject poolObject = _factory.Create();
 
-			poolObject.Name = objectName;
+			poolObject.Name = _poolObjectName;
 			poolObject.Transform.SetParent(parent);
 			poolObject.GameObject.SetActive(false);
 			poolObject.OnReturnedToPool += OnObjectReturnedToPool;
