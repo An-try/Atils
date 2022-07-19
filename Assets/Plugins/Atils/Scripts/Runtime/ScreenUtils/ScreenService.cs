@@ -7,27 +7,33 @@ namespace Atils.Runtime.ScreenUtils
 	{
 		public ScreenSizeChangedHandler ScreenSizeChangedEvent { get; set; } = default;
 
-		public Vector2 CurrentScreenSize { get; private set; } = default;
+		[SerializeField] private Vector2 _referenceSize = default;
 
-		public float ScreenTotalSize => CurrentScreenSize.x + CurrentScreenSize.y;
+		public Vector2 ReferenceSize => _referenceSize;
+		public float ReferenceSizeRatio => _referenceSize.x / _referenceSize.y;
+
+		public Vector2 CurrentSize { get; private set; } = default;
+		public float CurrentSizeRatio => CurrentSize.x / CurrentSize.y;
+
+		public float ScreenTotalSize => CurrentSize.x + CurrentSize.y;
 
 		private Vector2 _previousScreenSize = default;
 
 		[Inject]
 		private void Construct()
 		{
-			CurrentScreenSize = new Vector2(Screen.width, Screen.height);
-			_previousScreenSize = CurrentScreenSize;
+			CurrentSize = new Vector2(Screen.width, Screen.height);
+			_previousScreenSize = CurrentSize;
 		}
 
 		private void Update()
 		{
-			CurrentScreenSize = new Vector2(Screen.width, Screen.height);
+			CurrentSize = new Vector2(Screen.width, Screen.height);
 
-			if (CurrentScreenSize != _previousScreenSize)
+			if (CurrentSize != _previousScreenSize)
 			{
-				_previousScreenSize = CurrentScreenSize;
-				ScreenSizeChangedEvent?.Invoke(CurrentScreenSize);
+				_previousScreenSize = CurrentSize;
+				ScreenSizeChangedEvent?.Invoke(CurrentSize);
 			}
 		}
 	}
