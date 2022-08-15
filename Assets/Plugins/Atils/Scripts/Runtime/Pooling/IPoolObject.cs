@@ -11,11 +11,6 @@ namespace Atils.Runtime.Pooling
 		Transform Transform { get; }
 		GameObject GameObject { get; }
 
-		IPoolObject SetPosition(Vector3 position);
-		IPoolObject SetRotation(Quaternion rotation);
-		IPoolObject SetLocalScale(Vector3 localScale);
-		IPoolObject SetParent(Transform parent);
-
 		void UpdateObject(float timeStep);
 		void Pause();
 		void Unpause();
