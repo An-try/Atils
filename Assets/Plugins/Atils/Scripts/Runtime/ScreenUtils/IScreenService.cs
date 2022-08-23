@@ -6,7 +6,11 @@ namespace Atils.Runtime.ScreenUtils
 	{
 		ScreenSizeChangedHandler ScreenSizeChangedEvent { get; set; }
 
-		Vector2 CurrentScreenSize { get; }
+		Vector2 ReferenceSize { get; }
+		float ReferenceSizeRatio { get; }
+
+		Vector2 CurrentSize { get; }
+		float CurrentSizeRatio { get; }
 
 		float ScreenTotalSize { get; }
 	}

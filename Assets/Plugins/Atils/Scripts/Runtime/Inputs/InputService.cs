@@ -36,6 +36,8 @@ namespace Atils.Runtime.Inputs
 
 		[Inject] private IScreenService _screenService = default;
 
+		private float BUTTON_CLICK_IF_POINTER_NOT_MOVING_DISTANCE_MULTIPLIER = 20;
+
 		private Vector2 _pointerPositionOnButtonDown = default;
 		private List<RaycastResult> _pointerOverUIRaycastResults = new List<RaycastResult>();
 
@@ -144,7 +146,8 @@ namespace Atils.Runtime.Inputs
 		protected void HandlePointerOverPressedSpatialButton()
 		{
 			if (IsPointerOverPressedSpatialButton &&
-				Vector2.Distance(PointerPosition, _pointerPositionOnButtonDown) > _screenService.ScreenTotalSize / 50)
+				Vector2.Distance(PointerPosition, _pointerPositionOnButtonDown) >
+					_screenService.CurrentSizeRatio * BUTTON_CLICK_IF_POINTER_NOT_MOVING_DISTANCE_MULTIPLIER)
 			{
 				IsPointerOverPressedSpatialButton = false;
 			}

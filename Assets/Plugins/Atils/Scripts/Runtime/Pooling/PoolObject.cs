@@ -18,30 +18,6 @@ namespace Atils.Runtime.Pooling
 		public virtual void Initialize()
 		{ }
 
-		public IPoolObject SetPosition(Vector3 position)
-		{
-			transform.position = position;
-			return this;
-		}
-
-		public IPoolObject SetRotation(Quaternion rotation)
-		{
-			transform.rotation = rotation;
-			return this;
-		}
-
-		public IPoolObject SetLocalScale(Vector3 localScale)
-		{
-			transform.localScale = localScale;
-			return this;
-		}
-
-		public IPoolObject SetParent(Transform parent)
-		{
-			transform.SetParent(parent);
-			return this;
-		}
-
 		//public virtual void Initialize(IInitializeData initializeData)
 		//{
 		//	GameObjectInitializeData gameObjectInitializeData = (GameObjectInitializeData)initializeData;

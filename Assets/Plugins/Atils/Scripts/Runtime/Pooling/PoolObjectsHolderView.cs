@@ -78,13 +78,12 @@ namespace Atils.Runtime.Pooling
 			return InitializePoolObjectAtEnd(AddObject(transform));
 		}
 
-		private IPoolObject AddObject(Transform objectParent = null)
+		private IPoolObject AddObject(Transform parent = null)
 		{
-			Transform parent = objectParent == null ? transform : objectParent;
 			IPoolObject poolObject = _factory.Create();
 
 			poolObject.Name = _poolObjectName;
-			poolObject.Transform.SetParent(parent);
+			poolObject.Transform.parent = parent;
 			poolObject.GameObject.SetActive(false);
 			poolObject.OnReturnedToPool += OnObjectReturnedToPool;
 
