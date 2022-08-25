@@ -33,12 +33,12 @@ public class SaveLoadManager : MonoBehaviour
 			}
 		}
 
-		Debug.Log(objects.Count);
+		//Debug.Log(objects.Count); // TODO ended here
 
 		saveLoadData.Objects = objects;
 		//Debug.Log(saveLoadData.Objects.Length);
 
-		Debug.Log(JsonDataWriter.GetSerializedString(objects));
+		Debug.Log(JsonDataWriter.GetSerializedString(objects)); // TODO ended here as well
 		//JsonDataWriter.SaveData(saveLoadData, Application.dataPath, "TestFile");
 	}
 

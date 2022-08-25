@@ -12,7 +12,12 @@ namespace Atils.Runtime.Pooling
 
 		public static void Bind(DiContainer diContainer, ObjectsPoolView objectsPoolView)
 		{
-			ValidatePoolObjects(objectsPoolView);
+			if (!ValidatePoolObjects(objectsPoolView))
+			{
+				Debug.LogError("Cannot bind pool system. Fix all errors.");
+				return;
+			}
+
 			BindPoolObjectFactories(diContainer, objectsPoolView);
 
 			diContainer.Bind<ObjectsPoolView>().FromComponentInNewPrefab(objectsPoolView).AsSingle().NonLazy();
@@ -21,6 +26,8 @@ namespace Atils.Runtime.Pooling
 		private static bool ValidatePoolObjects(ObjectsPoolView objectsPoolView)
 		{
 			bool isSuccess = true;
+
+			isSuccess = objectsPoolView.ValidatePoolObjects();
 
 			for (int i = 0; i < objectsPoolView.PoolObjectPrefabs.Count; i++)
 			{
@@ -35,13 +42,16 @@ namespace Atils.Runtime.Pooling
 					isSuccess = false;
 				}
 
-				object objectFactoryInstance = Activator.CreateInstance(objectFactoryType);
-
-				if (objectFactoryType != null && !(objectFactoryInstance is PlaceholderFactory<IPoolObject>))
+				if (isSuccess)
 				{
-					Debug.LogError(nameof(PoolingSystemBinder) + ": The nested \"" + FACTORY_CLASS_NAME + "\" class in the \"" + objectType + "\" " +
-						"class does not inherit from \"PlaceholderFactory<IPoolObject>\".");
-					isSuccess = false;
+					object objectFactoryInstance = Activator.CreateInstance(objectFactoryType);
+
+					if (objectFactoryType != null && !(objectFactoryInstance is PlaceholderFactory<IPoolObject>))
+					{
+						Debug.LogError(nameof(PoolingSystemBinder) + ": The nested \"" + FACTORY_CLASS_NAME + "\" class in the \"" + objectType + "\" " +
+							"class does not inherit from \"PlaceholderFactory<IPoolObject>\".");
+						isSuccess = false;
+					}
 				}
 			}
 

@@ -88,7 +88,7 @@ public class PoolingTest : MonoBehaviour
 
 		stopwatch = new Stopwatch();
 		stopwatch = Stopwatch.StartNew();
-		_objectsPoolView.ReturnToPoolObjects<SphereView>();
+		_objectsPoolView.ReturnToPoolAllObjectsOfType<SphereView>();
 		stopwatch.Stop();
 		UnityEngine.Debug.Log("ReturnToPoolObjectsOfType: " + stopwatch.Elapsed.TotalSeconds);
 
@@ -109,7 +109,7 @@ public class PoolingTest : MonoBehaviour
 
 		stopwatch = new Stopwatch();
 		stopwatch = Stopwatch.StartNew();
-		_objectsPoolView.ReturnToPoolObjects<SphereView>();
+		_objectsPoolView.ReturnToPoolAllObjectsOfType<SphereView>();
 		stopwatch.Stop();
 		UnityEngine.Debug.Log("ReturnToPoolObjectsOfType: " + stopwatch.Elapsed.TotalSeconds);
 
@@ -130,7 +130,7 @@ public class PoolingTest : MonoBehaviour
 
 		stopwatch = new Stopwatch();
 		stopwatch = Stopwatch.StartNew();
-		_objectsPoolView.ReturnToPoolObjects<SphereView>();
+		_objectsPoolView.ReturnToPoolAllObjectsOfType<SphereView>();
 		stopwatch.Stop();
 		UnityEngine.Debug.Log("ReturnToPoolObjectsOfType: " + stopwatch.Elapsed.TotalSeconds);
 
@@ -159,7 +159,7 @@ public class PoolingTest : MonoBehaviour
 
 		stopwatch = new Stopwatch();
 		stopwatch = Stopwatch.StartNew();
-		_objectsPoolView.GetActiveObjects();
+		_objectsPoolView.GetAllObjects();
 		stopwatch.Stop();
 		UnityEngine.Debug.Log("GetActiveObjects: " + stopwatch.Elapsed.TotalSeconds);
 
@@ -188,19 +188,19 @@ public class PoolingTest : MonoBehaviour
 		UnityEngine.Debug.Log("Unpause: " + stopwatch.Elapsed.TotalSeconds);
 
 		//---------------------------------------------------------------------------------
-		_objectsPoolView.ReturnToPoolObjects();
+		_objectsPoolView.ReturnToPoolAllObjects();
 		//---------------------------------------------------------------------------------
 
 
 		stopwatch = new Stopwatch();
 		stopwatch = Stopwatch.StartNew();
-		_objectsPoolView.ReturnToPoolObjects();
+		_objectsPoolView.ReturnToPoolAllObjects();
 		stopwatch.Stop();
 		UnityEngine.Debug.Log("ReturnToPoolObjects: " + stopwatch.Elapsed.TotalSeconds);
 
 		stopwatch = new Stopwatch();
 		stopwatch = Stopwatch.StartNew();
-		_objectsPoolView.ReturnToPoolObjects<SphereView>();
+		_objectsPoolView.ReturnToPoolAllObjectsOfType<SphereView>();
 		stopwatch.Stop();
 		UnityEngine.Debug.Log("ReturnToPoolObjectsOfType: " + stopwatch.Elapsed.TotalSeconds);
 

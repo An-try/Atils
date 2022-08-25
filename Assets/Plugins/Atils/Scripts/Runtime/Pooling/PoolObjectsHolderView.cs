@@ -14,7 +14,20 @@ namespace Atils.Runtime.Pooling
 		private List<IPoolObject> _enabledPoolObjects = new List<IPoolObject>();
 		private List<IPoolObject> _disabledPoolObjects = new List<IPoolObject>();
 
-		public List<IPoolObject> ActiveObjects => _enabledPoolObjects.Concat(_disabledPoolObjects).ToList();
+		/// <summary>
+		/// Get a copy of the list of active and inactive objects
+		/// </summary>
+		public List<IPoolObject> AllObjects => _enabledPoolObjects.Concat(_disabledPoolObjects).ToList();
+
+		/// <summary>
+		/// Get a copy of the list of active objects
+		/// </summary>
+		public List<IPoolObject> ActiveObjects => new List<IPoolObject>(_enabledPoolObjects);
+
+		/// <summary>
+		/// Get a copy of the list of inactive objects
+		/// </summary>
+		public List<IPoolObject> InactiveObjects => new List<IPoolObject>(_disabledPoolObjects);
 
 		public void Initialize(PlaceholderFactory<IPoolObject> factory, string poolObjectName)
 		{
@@ -37,7 +50,7 @@ namespace Atils.Runtime.Pooling
 			return GetAvailableObjectOrCreateNew();
 		}
 
-		public void ReturnToPoolObjects()
+		public void ReturnToPoolAllObjects()
 		{
 			while (_enabledPoolObjects.Count > 0)
 			{

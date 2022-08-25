@@ -14,32 +14,13 @@ namespace Atils.Runtime.Pooling
 	{
 		[SerializeField] protected List<PoolObject> _poolObjectPrefabs = default;
 
-		protected DiContainer _diContainer = default;
+		[Inject] protected DiContainer _diContainer = default;
 
 		protected Dictionary<Type, PoolObjectsHolderView> _poolObjectsHolderViews = new Dictionary<Type, PoolObjectsHolderView>();
 
 		public virtual List<PoolObject> PoolObjectPrefabs => _poolObjectPrefabs;
 
-		[Inject]
-		protected virtual void Construct(DiContainer diContainer)
-		{
-			_diContainer = diContainer;
-		}
-
-#if UNITY_EDITOR
-		[ContextMenu("ValidatePoolObjects")]
-		protected virtual void ValidatePoolObjects()
-		{
-			_poolObjectPrefabs = _poolObjectPrefabs.Distinct().ToList();
-		}
-#endif
-
 		protected virtual void Awake()
-		{
-			Initialize();
-		}
-
-		protected virtual void Initialize()
 		{
 			InitializePoolObjectHolders();
 		}
@@ -66,6 +47,32 @@ namespace Atils.Runtime.Pooling
 			}
 		}
 
+		[EasyButtons.Button]
+		public virtual bool ValidatePoolObjects()
+		{
+			bool isSuccess = true;
+
+			if (_poolObjectPrefabs.Count != _poolObjectPrefabs.Distinct().Count())
+			{
+				Debug.LogError($"There are duplicates in pool objects list on prefab {name}. Remove them!");
+				isSuccess = false;
+				//_poolObjectPrefabs = _poolObjectPrefabs.Distinct().ToList(); // If you want to fix it in code
+			}
+
+			foreach (PoolObject prefab in _poolObjectPrefabs)
+			{
+				if (prefab == null)
+				{
+					Debug.LogError($"There are null objects in pool objects list on prefab {name}. Remove them!");
+					isSuccess = false;
+					//_poolObjectPrefabs.RemoveAll(x => x == null); // // If you want to fix it in code
+					break;
+				}
+			}
+
+			return isSuccess;
+		}
+
 		public virtual PoolObject GetObjectPrefab<T>() where T : IPoolObject
 		{
 			return _poolObjectPrefabs.Find(x => x.GetType() == typeof(T));
@@ -73,42 +80,71 @@ namespace Atils.Runtime.Pooling
 
 		public virtual T GetObject<T>() where T : IPoolObject
 		{
-			return (T)GetPoolObjectsHolderView<T>().GetObject();
+			return (T)GetPoolObjectsHolderViewOfType<T>().GetObject();
 		}
 
 		public virtual T GetRandomObject<T>() where T : IPoolObject
 		{
-			return (T)GetPoolObjectsHolderViews<T>().GetRandom().GetObject();
+			return (T)GetPoolObjectsHolderViewsOfType<T>().GetRandom().GetObject();
 		}
 
-		public virtual List<IPoolObject> GetActiveObjectsOfType<T>() where T : IPoolObject
-		{
-			return GetPoolObjectsHolderView<T>().ActiveObjects;
-		}
-
-		public virtual List<IPoolObject> GetActiveObjects()
+		/// <summary>
+		/// Get a copy of the list of active and inactive objects
+		/// </summary>
+		/// <returns></returns>
+		public virtual List<IPoolObject> GetAllObjects()
 		{
 			List<IPoolObject> activeObjects = new List<IPoolObject>();
 
 			foreach (KeyValuePair<Type, PoolObjectsHolderView> keyValuePair in _poolObjectsHolderViews)
 			{
-				activeObjects.AddRange(keyValuePair.Value.ActiveObjects);
+				activeObjects.AddRange(keyValuePair.Value.AllObjects);
 			}
 
 			return activeObjects;
 		}
 
-		public virtual void ReturnToPoolObjects<T>() where T : IPoolObject
+		/// <summary>
+		/// Get a copy of the list of active and inactive objects
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
+		public virtual List<IPoolObject> GetAllObjectsOfType<T>() where T : IPoolObject
 		{
-			GetPoolObjectsHolderView<T>().ReturnToPoolObjects();
+			return GetPoolObjectsHolderViewOfType<T>().AllObjects;
 		}
 
-		public virtual void ReturnToPoolObjects()
+		/// <summary>
+		/// Get a copy of the list of active objects
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
+		public virtual List<IPoolObject> GetActiveObjectsOfType<T>() where T : IPoolObject
+		{
+			return GetPoolObjectsHolderViewOfType<T>().ActiveObjects;
+		}
+
+		/// <summary>
+		/// Get a copy of the list of inactive objects
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
+		public virtual List<IPoolObject> GetInactiveObjectsOfType<T>() where T : IPoolObject
+		{
+			return GetPoolObjectsHolderViewOfType<T>().InactiveObjects;
+		}
+
+		public virtual void ReturnToPoolAllObjects()
 		{
 			foreach (KeyValuePair<Type, PoolObjectsHolderView> keyValuePair in _poolObjectsHolderViews)
 			{
-				keyValuePair.Value.ReturnToPoolObjects();
+				keyValuePair.Value.ReturnToPoolAllObjects();
 			}
+		}
+
+		public virtual void ReturnToPoolAllObjectsOfType<T>() where T : IPoolObject
+		{
+			GetPoolObjectsHolderViewOfType<T>().ReturnToPoolAllObjects();
 		}
 
 		protected override void OnPaused()
@@ -127,12 +163,12 @@ namespace Atils.Runtime.Pooling
 			}
 		}
 
-		protected virtual PoolObjectsHolderView GetPoolObjectsHolderView<T>()
+		protected virtual PoolObjectsHolderView GetPoolObjectsHolderViewOfType<T>()
 		{
 			return _poolObjectsHolderViews[typeof(T)];
 		}
 
-		protected virtual List<PoolObjectsHolderView> GetPoolObjectsHolderViews<T>()
+		protected virtual List<PoolObjectsHolderView> GetPoolObjectsHolderViewsOfType<T>()
 		{
 			List<PoolObjectsHolderView> poolObjectsHolderViews = new List<PoolObjectsHolderView>();
 
