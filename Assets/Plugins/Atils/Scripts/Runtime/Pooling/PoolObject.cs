@@ -67,6 +67,9 @@ namespace Atils.Runtime.Pooling
 		protected override void OnUnpaused()
 		{ }
 
+		/// <summary>
+		/// Called then returning to pool.
+		/// </summary>
 		protected abstract void ResetObject();
 
 		private void KillCoroutine(ref Coroutine coroutine)

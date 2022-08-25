@@ -10,7 +10,7 @@ using Zenject;
 
 namespace Atils.Runtime.Pooling
 {
-	public class ObjectsPoolView : PausableMonoBehaviour
+	public abstract class Pool : PausableMonoBehaviour
 	{
 		[SerializeField] protected List<PoolObject> _poolObjectPrefabs = default;
 

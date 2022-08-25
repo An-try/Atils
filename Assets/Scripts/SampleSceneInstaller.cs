@@ -4,20 +4,23 @@ using Atils.Runtime.ScreenUtils;
 using UnityEngine;
 using Zenject;
 
-public class SampleSceneInstaller : MonoInstaller
+namespace Test
 {
-	[SerializeField] private ObjectsPoolView _objectsPoolView = default;
-
-	[SerializeField] private InputServicesConfig _inputServicesConfig = default;
-	[SerializeField] private ScreenServicesConfig _screenServicesConfig = default;
-
-	public override void InstallBindings()
+	public class SampleSceneInstaller : MonoInstaller
 	{
-		// TODO save-load system
+		[SerializeField] private InputServicesConfig _inputServicesConfig = default;
+		[SerializeField] private ScreenServicesConfig _screenServicesConfig = default;
 
-		InputServiceBinder.Bind(Container, _inputServicesConfig);
-		ScreenServiceBinder.Bind(Container, _screenServicesConfig);
+		[SerializeField] private ScenePool _scenePool = default;
 
-		PoolingSystemBinder.Bind(Container, _objectsPoolView);
+		public override void InstallBindings()
+		{
+			// TODO save-load system
+
+			InputServiceBinder.Bind(Container, _inputServicesConfig);
+			ScreenServiceBinder.Bind(Container, _screenServicesConfig);
+
+			PoolingSystemBinder.Bind<ScenePool>(Container, _scenePool);
+		}
 	}
 }
