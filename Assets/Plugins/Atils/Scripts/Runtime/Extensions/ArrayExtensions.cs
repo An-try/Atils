@@ -109,5 +109,23 @@ namespace Atils.Runtime.Extensions
 		}
 
 		#endregion
+
+		#region Shuffling
+
+		public static T[] Shuffle<T>(this T[] source)
+		{
+			int randomIndex;
+			for (int i = 0; i < source.Length - 1; i++)
+			{
+				randomIndex = UnityEngine.Random.Range(i + 1, source.Length);
+				T value = source[i];
+				source[i] = source[randomIndex];
+				source[randomIndex] = value;
+			}
+
+			return source;
+		}
+
+		#endregion
 	}
 }
