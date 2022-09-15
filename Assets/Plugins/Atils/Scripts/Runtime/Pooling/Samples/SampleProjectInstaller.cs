@@ -9,7 +9,7 @@ namespace Atils.Runtime.Pooling
 
 		public override void InstallBindings()
 		{
-			PoolingSystemBinder.Bind<ProjectPool>(Container, _projectPool);
+			PoolingSystemBinder.Bind(Container, _projectPool);
 		}
 	}
 }

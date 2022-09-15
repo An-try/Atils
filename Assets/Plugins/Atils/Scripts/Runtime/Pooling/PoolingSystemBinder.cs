@@ -10,7 +10,7 @@ namespace Atils.Runtime.Pooling
 	{
 		private const string FACTORY_CLASS_NAME = "Factory";
 
-		public static void Bind<T>(DiContainer diContainer, Pool pool)
+		public static void Bind<T>(DiContainer diContainer, T pool) where T : Pool
 		{
 			if (!ValidatePoolObjects(pool))
 			{

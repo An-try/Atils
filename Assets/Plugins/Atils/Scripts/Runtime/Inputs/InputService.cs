@@ -100,7 +100,8 @@ namespace Atils.Runtime.Inputs
 
 		protected virtual SpatialButton TryGetSpatialButtonUnderCursor()
 		{
-			Ray ray = UnityEngine.Camera.main.ScreenPointToRay(UnityEngine.Input.mousePosition);
+			Camera camera = UnityEngine.Camera.main;
+			Ray ray = camera != null ? UnityEngine.Camera.main.ScreenPointToRay(UnityEngine.Input.mousePosition) : default;
 
 			if (Physics.Raycast(ray, out RaycastHit hit) && !IsPointerOverUIObject)
 			{

@@ -20,7 +20,7 @@ namespace Test
 			InputServiceBinder.Bind(Container, _inputServicesConfig);
 			ScreenServiceBinder.Bind(Container, _screenServicesConfig);
 
-			PoolingSystemBinder.Bind<ScenePool>(Container, _scenePool);
+			PoolingSystemBinder.Bind(Container, _scenePool);
 		}
 	}
 }
