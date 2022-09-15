@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9206773147991449541}
-  - component: {fileID: 9206773147991449540}
+  - component: {fileID: 8213579492355281127}
   m_Layer: 0
-  m_Name: SampleSceneObjectsPoolView
+  m_Name: SampleScenePool
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -31,7 +31,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &9206773147991449540
+--- !u!114 &8213579492355281127
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -40,7 +40,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 9206773147991449539}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 23a973493b3894f40986cc3814270937, type: 3}
+  m_Script: {fileID: 11500000, guid: 373797a06202a8642a64c2c2828e5e93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _poolObjectPrefabs:

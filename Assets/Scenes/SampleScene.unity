@@ -747,7 +747,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _inputServicesConfig: {fileID: 11400000, guid: f79be73a4d9f53f4da1cd9ad20cd55f4, type: 2}
   _screenServicesConfig: {fileID: 11400000, guid: d829f2e6d38c3a64cb8e47a809150bc2, type: 2}
-  _scenePool: {fileID: 0}
+  _scenePool: {fileID: 8213579492355281127, guid: 72c0f1314a982fc45b1e3fd5cb2a7133, type: 3}
 --- !u!1 &1211827617
 GameObject:
   m_ObjectHideFlags: 0
