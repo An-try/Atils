@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Atils.Runtime.Extensions
 {
-	public static class CollectionsGenericIEnumerableExtensions
+	public static class IEnumerableExtensions
 	{
 		#region Getting random items
 
