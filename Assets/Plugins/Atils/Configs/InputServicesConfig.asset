@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _mouseInputService: {fileID: 2728311515855508321, guid: 8465edd1e7b96ad41bb7a4ade4f0f71b, type: 3}
   _touchInputService: {fileID: 2272664322319790987, guid: 5fb162ac9e3cae24a8a9714bf03e08ce, type: 3}
+  _ovrInputService: {fileID: 8807214075730178228, guid: 76070fba0347cbc4e9890e6984ee0177, type: 3}

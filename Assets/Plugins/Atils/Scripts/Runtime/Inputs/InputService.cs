@@ -23,7 +23,7 @@ namespace Atils.Runtime.Inputs
 		public SpatialButton SpatialButtonDown { get; protected set; } = null;
 		public SpatialButton SpatialButtonUnderCursor { get; protected set; } = null;
 		public SpatialButton PreviousSpatialButtonUnderCursor { get; protected set; } = null;
-		public bool IsPointerOverPressedSpatialButton { get; private set; } = false;
+		public bool IsPointerOverPressedSpatialButton { get; protected set; } = false;
 		public bool IsPointerOverSpatialButton => SpatialButtonUnderCursor != null;
 
 		public abstract float PointerAxisX { get; }
@@ -144,7 +144,7 @@ namespace Atils.Runtime.Inputs
 			return raycastResultsCount > 0;
 		}
 
-		protected void HandlePointerOverPressedSpatialButton()
+		protected virtual void HandlePointerOverPressedSpatialButton()
 		{
 			if (IsPointerOverPressedSpatialButton &&
 				Vector2.Distance(PointerPosition, _pointerPositionOnButtonDown) >

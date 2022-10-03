@@ -7,8 +7,10 @@ namespace Atils.Runtime.Inputs
 	{
 		[SerializeField] private MouseInputService _mouseInputService = default;
 		[SerializeField] private TouchInputService _touchInputService = default;
+		[SerializeField] private OVRInputService _ovrInputService = default;
 
 		public MouseInputService MouseInputService => _mouseInputService;
 		public TouchInputService TouchInputService => _touchInputService;
+		public OVRInputService OVRInputService => _ovrInputService;
 	}
 }
