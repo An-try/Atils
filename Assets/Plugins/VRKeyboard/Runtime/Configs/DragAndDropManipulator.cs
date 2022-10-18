@@ -6,28 +6,41 @@ namespace VRKeyboard.Runtime
 {
 	public class DragAndDropManipulator : PointerManipulator
 	{
-        public DragAndDropManipulator(VisualElement target, VisualElement root)
+        public DragAndDropManipulator(List<VisualElement> targets, VisualElement root)
         {
-            this.target = target;
-            //root = target.parent;
+            this.allTargets = targets;
             this.root = root;
+
+            this.target = new VisualElement();
         }
+
+        public void AddTarget()
+		{
+
+		}
+
+        public void RemoveOrClearTargets()
+		{
+
+		}
 
         protected override void RegisterCallbacksOnTarget()
         {
-            target.RegisterCallback<PointerDownEvent>(PointerDownHandler);
-            target.RegisterCallback<PointerMoveEvent>(PointerMoveHandler);
-            target.RegisterCallback<PointerUpEvent>(PointerUpHandler);
-            target.RegisterCallback<PointerCaptureOutEvent>(PointerCaptureOutHandler);
+            allTargets.ForEach(x => x.RegisterCallback<PointerDownEvent>(PointerDownHandler));
+            allTargets.ForEach(x => x.RegisterCallback<PointerMoveEvent>(PointerMoveHandler));
+            allTargets.ForEach(x => x.RegisterCallback<PointerUpEvent>(PointerUpHandler));
+            allTargets.ForEach(x => x.RegisterCallback<PointerCaptureOutEvent>(PointerCaptureOutHandler));
         }
 
         protected override void UnregisterCallbacksFromTarget()
         {
-            target.UnregisterCallback<PointerDownEvent>(PointerDownHandler);
-            target.UnregisterCallback<PointerMoveEvent>(PointerMoveHandler);
-            target.UnregisterCallback<PointerUpEvent>(PointerUpHandler);
-            target.UnregisterCallback<PointerCaptureOutEvent>(PointerCaptureOutHandler);
+            allTargets.ForEach(x => x.UnregisterCallback<PointerDownEvent>(PointerDownHandler));
+            allTargets.ForEach(x => x.UnregisterCallback<PointerMoveEvent>(PointerMoveHandler));
+            allTargets.ForEach(x => x.UnregisterCallback<PointerUpEvent>(PointerUpHandler));
+            allTargets.ForEach(x => x.UnregisterCallback<PointerCaptureOutEvent>(PointerCaptureOutHandler));
         }
+
+        private List<VisualElement> allTargets = default;
 
         private Vector2 targetStartPosition { get; set; }
 
@@ -39,6 +52,8 @@ namespace VRKeyboard.Runtime
 
         private void PointerDownHandler(PointerDownEvent evt)
         {
+            target = (VisualElement)evt.target;
+
             targetStartPosition = target.transform.position;
             pointerStartPosition = evt.position;
             target.CapturePointer(evt.pointerId);
@@ -62,6 +77,7 @@ namespace VRKeyboard.Runtime
             if (enabled && target.HasPointerCapture(evt.pointerId))
             {
                 target.ReleasePointer(evt.pointerId);
+                target = new VisualElement();
             }
         }
 
@@ -69,18 +85,18 @@ namespace VRKeyboard.Runtime
         {
             if (enabled)
             {
-                Slots slotsContainer = root.Q<Slots>();
-                UQueryBuilder<Slot> allSlots = slotsContainer.Query<Slot>();
-                UQueryBuilder<Slot> overlappingSlots = allSlots.Where(OverlapsTarget);
-                Slot closestOverlappingSlot = FindClosestSlot(overlappingSlots);
+                Container rowsContainer = root.Q<Container>();
+                UQueryBuilder<Row> allRows = rowsContainer.Query<Row>();
+                UQueryBuilder<Row> overlappingRows = allRows.Where(OverlapsTarget);
+                Row closestOverlappingRow = FindClosestRow(overlappingRows);
                 Vector3 closestPos = Vector3.zero;
-                if (closestOverlappingSlot != null)
+                if (closestOverlappingRow != null)
                 {
-                    closestPos = RootSpaceOfSlot(closestOverlappingSlot);
+                    closestPos = RootSpaceOfRow(closestOverlappingRow);
                     closestPos = new Vector2(closestPos.x - 5, closestPos.y - 5);
                 }
 
-                if (closestOverlappingSlot != null)
+                if (closestOverlappingRow != null)
 				{
                     target.transform.position = closestPos;
                 }
@@ -93,33 +109,33 @@ namespace VRKeyboard.Runtime
             }
         }
 
-        private bool OverlapsTarget(Slot slot)
+        private bool OverlapsTarget(Row row)
         {
-            return target.worldBound.Overlaps(slot.worldBound);
+            return target.worldBound.Overlaps(row.worldBound);
         }
 
-        private Slot FindClosestSlot(UQueryBuilder<Slot> slots)
+        private Row FindClosestRow(UQueryBuilder<Row> rows)
         {
-            List<Slot> slotsList = slots.ToList();
+            List<Row> rowsList = rows.ToList();
             float bestDistanceSq = float.MaxValue;
-            Slot closest = null;
-            foreach (Slot slot in slotsList)
+            Row closest = null;
+            foreach (Row row in rowsList)
             {
-                Vector3 displacement = RootSpaceOfSlot(slot) - target.transform.position;
+                Vector3 displacement = RootSpaceOfRow(row) - target.transform.position;
                 float distanceSq = displacement.sqrMagnitude;
                 if (distanceSq < bestDistanceSq)
                 {
                     bestDistanceSq = distanceSq;
-                    closest = slot;
+                    closest = row;
                 }
             }
             return closest;
         }
 
-        private Vector3 RootSpaceOfSlot(Slot slot)
+        private Vector3 RootSpaceOfRow(Row row)
         {
-            Vector2 slotWorldSpace = slot.parent.LocalToWorld(slot.layout.position);
-            return root.WorldToLocal(slotWorldSpace);
+            Vector2 rowWorldSpace = row.parent.LocalToWorld(row.layout.position);
+            return root.WorldToLocal(rowWorldSpace);
         }
     }
 }
