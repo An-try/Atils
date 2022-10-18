@@ -1,5 +1,6 @@
 using UnityEditor;
 using UnityEditor.UIElements;
+using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.UIElements;
 using VRKeyboard.Runtime;
@@ -11,6 +12,7 @@ namespace VRKeyboard.Editor
 	{
 		private KeyboardKeysConfig _config => (KeyboardKeysConfig)target;
 		private VisualElement _root = default;
+		private StyleSheet _styleSheet = default;
 
 		//private SerializedObject _configSerializedObject = default;
 
@@ -80,7 +82,7 @@ namespace VRKeyboard.Editor
 
 		private void Compose()
 		{
-			StyleSheet styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/Plugins/VRKeyboard/Runtime/Configs/KeyboardKeysConfig.uss");
+			_styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/Plugins/VRKeyboard/Runtime/Configs/KeyboardKeysConfig.uss");
 
 			_root.Add(_clearButton);
 			_root.Add(_addKeyButton);
@@ -88,23 +90,19 @@ namespace VRKeyboard.Editor
 			_root.Add(_keysField);
 			_root.Add(_testIntField);
 
-			VisualElement slots = new Slots();
+			VisualElement slots = new Slots(_styleSheet);
 
 			for (int i = 0; i < _config.Keys.Count; i++)
 			{
-				VisualElement row = new Row();
-				row.styleSheets.Add(styleSheet);
+				VisualElement row = new Row(_styleSheet);
 
 				for (int j = 0; j < _config.Keys[i].Count; j++)
 				{
-					VisualElement slot = new Slot();
-					slot.styleSheets.Add(styleSheet);
+					VisualElement slot = new Slot(_styleSheet);
 
 					if (i == 0 && j == 0)
 					{
-						VisualElement key = new Key();
-						key.styleSheets.Add(styleSheet);
-						slot.Add(key);
+						slot.Add(new Key(_styleSheet));
 					}
 
 					row.Add(slot);
@@ -118,26 +116,24 @@ namespace VRKeyboard.Editor
 
 		private void ClearConfig()
 		{
+			_root.Q<Slots>().Clear();
 			_config.Clear();
-
-			//Object[] objects = new Object[1] { target };
-			//this.ResetTarget();
-			//this.Repaint();
-			//this.ReloadPreviewInstances();
-
-			//serializedObject.ApplyModifiedProperties();
 		}
 
 		private void AddKeyToConfig()
 		{
+			if (_config.Keys.Count <= 0)
+			{
+				_root.Q<Slots>().Add(new Row(_styleSheet));
+			}
+
+			Slot slot = new Slot(_styleSheet);
+			slot.Add(new Key(_styleSheet));
+
+			VisualElement slots = _root.Q<Slots>();
+			slots[slots.childCount - 1].Add(new Slot(_styleSheet));
+
 			_config.AddKey();
-
-			//Object[] objects = new Object[1] { target };
-			//this.ResetTarget();
-			//this.Repaint();
-			//this.ReloadPreviewInstances();
-
-			//serializedObject.ApplyModifiedProperties();
 		}
 	}
 }
