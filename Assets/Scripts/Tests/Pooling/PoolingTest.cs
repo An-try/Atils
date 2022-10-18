@@ -58,6 +58,8 @@ public class PoolingTest : MonoBehaviour
 
 		return;
 
+#pragma warning disable 0162
+
 		IPoolObject poolObject1 = _scenePool.GetObject<CubeView>()
 			.SetPosition(new Vector3(1, 1, -1))
 			.SetLocalScale(new Vector3(1, 0.5f, 1))
@@ -205,5 +207,7 @@ public class PoolingTest : MonoBehaviour
 		UnityEngine.Debug.Log("ReturnToPoolObjectsOfType: " + stopwatch.Elapsed.TotalSeconds);
 
 		//---------------------------------------------------------------------------------
+
+#pragma warning restore 0162
 	}
 }
