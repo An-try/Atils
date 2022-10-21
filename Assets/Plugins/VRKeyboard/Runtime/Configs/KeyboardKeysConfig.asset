@@ -12,4 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d773e1de09218e84fbec2e86c544e629, type: 3}
   m_Name: KeyboardKeysConfig
   m_EditorClassIdentifier: 
-  TestInt: 0
+  Rows:
+  - Keys:
+    - Content: 
+    - Content: 
+    - Content: 
+    - Content: 
+  - Keys:
+    - Content: 
+    - Content: 
+    - Content: 
+    - Content: 
+  - Keys:
+    - Content: 
+    - Content: 
+  KeyboardRowsHeight: 40

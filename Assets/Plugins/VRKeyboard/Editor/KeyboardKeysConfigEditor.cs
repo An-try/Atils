@@ -2,170 +2,230 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.UIElements;
-using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.UIElements;
-using VRKeyboard.Runtime;
 
-namespace VRKeyboard.Editor
+[CustomEditor(typeof(KeyboardKeysConfig))]
+public class KeyboardKeysConfigEditor : UnityEditor.Editor
 {
-	[CustomEditor(typeof(KeyboardKeysConfig))]
-	public class KeyboardKeysConfigEditor : UnityEditor.Editor
+	private KeyboardKeysConfig _config => (KeyboardKeysConfig)target;
+	private VisualElement _root = default;
+	private StyleSheet _styleSheet = default;
+	private DragAndDropManipulator _manipulator = default;
+
+	private SerializedProperty _keyboardRowsHeightSerializedProperty = default;
+	private IntegerField _keyboardRowsHeightInputField = default;
+
+	private Button _clearButton = default;
+	private Button _addKeyButton = default;
+	private Button _addRowButton = default;
+	private ToggleButton _toggleEditModeButton = default;
+
+	private bool _keyEditMode = false;
+
+	private void OnEnable()
 	{
-		private KeyboardKeysConfig _config => (KeyboardKeysConfig)target;
-		private VisualElement _root = default;
-		private StyleSheet _styleSheet = default;
-		private DragAndDropManipulator _manipulator = default;
+		_config.OnRowsUpdatedEvent += OnRowsUpdated;
+	}
 
-		//private SerializedObject _configSerializedObject = default;
+	private void OnDisable()
+	{
+		_config.OnRowsUpdatedEvent -= OnRowsUpdated;
+	}
 
-		private SerializedProperty _keysSerializedProperty = default;
-		private PropertyField _keysField = default;
+	private void OnRowsUpdated(List<RowData> rowDatas)
+	{
+		RebuildKeyboardElement(rowDatas, _root.Q<KeyboardElement>());
+		RebuildDragAndDropManipulator();
+		ToggleInputFields(_toggleEditModeButton.IsToggled);
 
-		private SerializedProperty _testIntSerializedProperty = default;
-		private IntegerField _testIntField = default;
+		serializedObject.ApplyModifiedProperties();
+		EditorUtility.SetDirty(_config);
+	}
 
-		private Button _clearButton = default;
-		private Button _addKeyButton = default;
-		private ToggleButton _toggleEditModeButton = default;
+	#region Base
 
-		public override VisualElement CreateInspectorGUI()
+	public override VisualElement CreateInspectorGUI()
+	{
+		FindProperties();
+		InitializeEditor();
+		Compose();
+
+		return _root;
+	}
+
+	private void FindProperties()
+	{
+		_keyboardRowsHeightSerializedProperty = serializedObject.FindProperty(nameof(KeyboardKeysConfig.KeyboardRowsHeight));
+	}
+
+	private void InitializeEditor()
+	{
+		_root = new VisualElement();
+		_styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/Plugins/VRKeyboard/Runtime/Configs/KeyboardKeysConfig.uss");
+
+		_clearButton = new Button(ClearConfig);
+		_clearButton.text = "Clear";
+
+		_addKeyButton = new Button(AddKeyToConfig);
+		_addKeyButton.text = "Add Key";
+
+		_addRowButton = new Button(AddKeyToConfig);
+		_addRowButton.text = "+";
+
+		_toggleEditModeButton = new ToggleButton("Toggle edit mode (On)", "Toggle edit mode (Off)", _styleSheet, ToggleEditMode);
+
+		_keyboardRowsHeightInputField = new IntegerField("Keyboard Rows Height");
+		_keyboardRowsHeightInputField.BindProperty(_keyboardRowsHeightSerializedProperty);
+		_keyboardRowsHeightInputField.RegisterValueChangedCallback(SetKeyboardRowsHeight);
+	}
+
+	private void SetKeyboardRowsHeight(ChangeEvent<int> output)
+	{
+		_root.Q<KeyboardElement>().SetRowsHeight(output.newValue);
+	}
+
+	private void Compose()
+	{
+		_root.Add(_clearButton);
+		_root.Add(_addKeyButton);
+		_root.Add(_toggleEditModeButton);
+
+		_root.Add(_keyboardRowsHeightInputField);
+
+		KeyboardElement keyboardElement = new KeyboardElement(_styleSheet);
+		RebuildKeyboardElement(_config.Rows, keyboardElement);
+		_root.Add(keyboardElement);
+
+		RebuildDragAndDropManipulator();
+		ToggleInputFields(_toggleEditModeButton.IsToggled);
+	}
+
+	#endregion
+
+	#region Data from config
+
+	private void ReadAndApplyDataFromConfig()
+	{
+
+	}
+
+	private void ReadDataFromConfig()
+	{
+
+	}
+
+	private void ApplyDataFromConfig()
+	{
+
+	}
+
+	#endregion
+
+	#region Data to config
+
+	private void WriteDataToConfig()
+	{
+
+	}
+
+	#endregion
+
+	#region Key editing
+
+	private void EnableKeyEditMode(KeyElement keyElement)
+	{
+		_root.Add(new KeyEditContainer(_styleSheet, keyElement.KeyData));
+	}
+
+	private void DisableKeyEditMode()
+	{
+		_root.Remove(_root.Q<KeyEditContainer>());
+	}
+
+	#endregion
+
+	private void AddKeyToConfig()
+	{
+		_config.AddNewKey();
+	}
+
+	private void ClearConfig()
+	{
+		_config.Clear();
+	}
+
+	private void AddRowToConfig()
+	{
+		_config.AddNewRow();
+	}
+
+	public void AddKey(RowElement rowElement, KeyElement keyElement)
+	{
+		keyElement.OnPointerUpEvent += EnableKeyEditMode;
+		rowElement.Add(keyElement);
+	}
+
+	private void RebuildKeyboardElement(List<RowData> rowDatas, KeyboardElement keyboardElement)
+	{
+		keyboardElement.Query<KeyElement>().ForEach(x => x.OnPointerUpEvent -= EnableKeyEditMode);
+		keyboardElement.Clear();
+
+		if (rowDatas == null)
 		{
-			FindProperties();
-			InitializeEditor();
-			Compose();
+			return;
+		}
 
-			UQueryBuilder<Key> allKeys = _root.Query<Key>();
-			if (allKeys != null)
+		for (int i = 0; i < rowDatas.Count; i++)
+		{
+			RowElement rowElement = new RowElement(_styleSheet);
+
+			for (int j = 0; j < rowDatas[i].Keys.Count; j++)
 			{
-				_manipulator = new DragAndDropManipulator(allKeys.ToList().Cast<VisualElement>().ToList(), _root.Query<Container>());
+				AddKey(rowElement, new KeyElement(_styleSheet, "0"));
 			}
 
-			//// VisualElements objects can contain other VisualElement following a tree hierarchy.
-			//VisualElement label = new Label("Hello World! From C#");
-			//_root.Add(label);
-
-			// Import UXML
-			//var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/Plugins/VRKeyboard/Runtime/Configs/KeyboardKeysConfig.uxml");
-			//VisualElement labelFromUXML = visualTree.Instantiate();
-			//root.Add(labelFromUXML);
-
-			// A stylesheet can be added to a VisualElement.
-			// The style will be applied to the VisualElement and all of its children.
-			//StyleSheet styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/Plugins/VRKeyboard/Runtime/Configs/KeyboardKeysConfig.uss");
-			//VisualElement labelWithStyle = new Label("Hello World! With Style");
-			//labelWithStyle.styleSheets.Add(styleSheet);
-			//root.Add(labelWithStyle);
-
-			return _root;
+			keyboardElement.Add(rowElement);
 		}
+	}
 
-		private void FindProperties()
+	private void RebuildDragAndDropManipulator()
+	{
+		if (_manipulator != null)
 		{
-			//_configSerializedObject = new SerializedObject(_config);
-
-			_keysSerializedProperty = serializedObject.FindProperty(nameof(KeyboardKeysConfig.Keys));
-			_testIntSerializedProperty = serializedObject.FindProperty(nameof(KeyboardKeysConfig.TestInt));
+			_manipulator.OnKeyDroppedEvent -= OnKeyDropped;
+			_manipulator.Dispose();
+			_manipulator = null;
 		}
 
-		private void InitializeEditor()
+		if (_toggleEditModeButton.IsToggled)
 		{
-			_root = new VisualElement();
-			_styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/Plugins/VRKeyboard/Runtime/Configs/KeyboardKeysConfig.uss");
-
-			_clearButton = new Button(ClearConfig);
-			_clearButton.text = "Clear";
-
-			_addKeyButton = new Button(AddKeyToConfig);
-			_addKeyButton.text = "Add Key";
-
-			_toggleEditModeButton = new ToggleButton("Toggle edit mode", _styleSheet, ToggleEditMode);
-
-			_keysField = new PropertyField(_keysSerializedProperty);
-
-			_testIntField = new IntegerField();
-			_testIntField.BindProperty(_testIntSerializedProperty);
+			return;
 		}
 
-		private void Compose()
+		UQueryBuilder<KeyElement> keyElements = _root.Query<KeyElement>();
+		if (keyElements != null && keyElements.ToList().Count > 0)
 		{
-			_root.Add(_clearButton);
-			_root.Add(_addKeyButton);
-			_root.Add(_toggleEditModeButton);
-
-			_root.Add(_keysField);
-			_root.Add(_testIntField);
-
-			VisualElement container = new Container(_styleSheet);
-
-			for (int i = 0; i < _config.Keys.Count; i++)
-			{
-				VisualElement row = new Row(_styleSheet);
-
-				for (int j = 0; j < _config.Keys[i].Count; j++)
-				{
-					row.Add(new Key(_styleSheet, "0"));
-				}
-
-				container.Add(row);
-			}
-
-			_root.Add(container);
+			_manipulator = new DragAndDropManipulator(_config, _root.Query<KeyboardElement>(), keyElements.ToList().Cast<VisualElement>().ToList());
+			_manipulator.OnKeyDroppedEvent += OnKeyDropped;
 		}
+	}
 
-		private void ClearConfig()
-		{
-			_root.Q<Container>().Clear();
-			_config.Clear();
+	private void OnKeyDropped()
+	{
+		ToggleInputFields(_toggleEditModeButton.IsToggled);
+		// update config
+	}
 
-			UQueryBuilder<Key> allKeys = _root.Query<Key>();
-			if (allKeys != null)
-			{
-				_manipulator = new DragAndDropManipulator(allKeys.ToList().Cast<VisualElement>().ToList(), _root.Query<Container>());
-			}
-		}
+	private void ToggleEditMode(bool isToggled)
+	{
+		RebuildDragAndDropManipulator();
+		ToggleInputFields(isToggled);
+	}
 
-		private void AddKeyToConfig()
-		{
-			if (_config.Keys.Count <= 0)
-			{
-				_root.Q<Container>().Add(new Row(_styleSheet));
-			}
-
-			Key key = new Key(_styleSheet, "0");
-			key.ToggleInputField(_toggleEditModeButton.IsToggled);
-
-			VisualElement container = _root.Q<Container>();
-			container[container.childCount - 1].Add(key);
-
-			_config.AddKey();
-
-			UQueryBuilder<Key> allKeys = _root.Query<Key>();
-			if (allKeys != null)
-			{
-				_manipulator = new DragAndDropManipulator(allKeys.ToList().Cast<VisualElement>().ToList(), _root.Query<Container>());
-			}
-		}
-
-		private void ToggleEditMode()
-		{
-			ToggleInputFields(_toggleEditModeButton.IsToggled);
-
-			if (_toggleEditModeButton.IsToggled)
-			{
-				//_toggleEditModeButton.style.color = new StyleColor(new Color(50, 50, 50));
-			}
-			else
-			{
-				//_toggleEditModeButton.style.color = new StyleColor(new Color(196, 196, 196));
-			}
-		}
-
-		private void ToggleInputFields(bool isToggled)
-		{
-			UQueryBuilder<Key> allKeys = _root.Query<Key>();
-			List<Key> keys = allKeys.ToList();
-			keys.ForEach(x => x.ToggleInputField(isToggled));
-		}
+	private void ToggleInputFields(bool isToggled)
+	{
+		List<KeyElement> keyElementsList = _root.Query<KeyElement>().ToList();
+		keyElementsList.ForEach(x => x.ToggleInputField(isToggled));
 	}
 }

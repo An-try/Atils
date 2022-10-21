@@ -1,10 +1,12 @@
-Label {
-    font-size: 20px;
-    -unity-font-style: bold;
-    color: rgb(68, 138, 255);
+/*Base start*/
+
+Container {
+    margin-top: 10px;
+    margin-right: 10px;
 }
 
 Row {
+    height: 40px;
     flex-direction: row;
     background-color: rgb(40, 40, 40);
 }
@@ -24,6 +26,44 @@ KeyTextField {
 }
 
 TextInput {
-    background-color: rgb(120, 120, 120);
+    background-color: rgb(42, 42, 42);
     -unity-text-align: middle-center;
 }
+
+FloatInput {
+    background-color: rgb(42, 42, 42);
+    -unity-text-align: middle-center;
+}
+
+KeyImage {
+    width: 40px;
+    height: 40px;
+    margin: 0px;
+    position: absolute;
+}
+
+/*Base end*/
+
+/*Key editing start*/
+
+KeyEditContainer {
+
+}
+
+TextKeyEditContainer {
+    height: 100px;
+    margin-top: 10px;
+    margin-right: 10px;
+    border-radius: 10px;
+    background-color: rgb(40, 40, 40);
+}
+
+ImageKeyEditContainer {
+    height: 120px;
+    margin-top: 10px;
+    margin-right: 10px;
+    border-radius: 10px;
+    background-color: rgb(40, 40, 40);
+}
+
+/*Key editing end*/
