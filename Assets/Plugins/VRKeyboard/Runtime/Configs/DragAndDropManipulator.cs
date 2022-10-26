@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class DragAndDropManipulator : PointerManipulator, IDisposable
+public class DragAndDropManipulator : IDisposable
 {
 	public Action OnKeyElementRemovedEvent { get; set; }
 	public Action OnKeyDroppedEvent { get; set; }
@@ -12,6 +12,7 @@ public class DragAndDropManipulator : PointerManipulator, IDisposable
 	private KeyboardElement _keyboardElement { get; } = default;
 	private List<VisualElement> _allTargets { get; } = default;
 
+	private VisualElement _target { get; set; } = default;
 	private int _previousRowIndex { get; set; } = default;
 	private int _previousKeyIndex { get; set; } = default;
 	private Vector2 _targetStartPosition { get; set; } = default;
@@ -24,11 +25,11 @@ public class DragAndDropManipulator : PointerManipulator, IDisposable
 		_keyboardElement = keyboardElement;
 		_allTargets = targets;
 
-		this.target = new VisualElement();
+		RegisterCallbacksOnTarget();
 	}
 
 	// Registering when this.target is not null
-	protected override void RegisterCallbacksOnTarget()
+	private void RegisterCallbacksOnTarget()
 	{
 		_allTargets.ForEach(x => x.RegisterCallback<PointerDownEvent>(PointerDownHandler));
 		_allTargets.ForEach(x => x.RegisterCallback<PointerMoveEvent>(PointerMoveHandler));
@@ -37,7 +38,7 @@ public class DragAndDropManipulator : PointerManipulator, IDisposable
 	}
 
 	// Unregistering when this.target is null
-	protected override void UnregisterCallbacksFromTarget()
+	private void UnregisterCallbacksFromTarget()
 	{
 		_allTargets.ForEach(x => x.UnregisterCallback<PointerDownEvent>(PointerDownHandler));
 		_allTargets.ForEach(x => x.UnregisterCallback<PointerMoveEvent>(PointerMoveHandler));
@@ -47,58 +48,96 @@ public class DragAndDropManipulator : PointerManipulator, IDisposable
 
 	private void PointerDownHandler(PointerDownEvent evt)
 	{
-		target = (VisualElement)evt.target;
+		_target = (VisualElement)evt.target;
 
-		// Save some data about key element before dragging
-		_previousRowIndex = _keyboardElement.IndexOf(target.parent);
-		_previousKeyIndex = target.parent.IndexOf(target);
+		//// Save some data about key element before dragging
+		//_previousRowIndex = _keyboardElement.IndexOf(_target.parent);
+		//_previousKeyIndex = _target.parent.IndexOf(_target);
 
-		// Extract a target from its hierarchy and add it to the top layer to draw it on top of other elements
-		float height = target.layout.height;
-		float width = target.layout.width;
-		target.RemoveFromHierarchy();
-		target.style.position = Position.Absolute;
-		target.style.height = height;
-		target.style.width = width;
-		_keyboardElement.Add(target);
+		//// Extract a target from its hierarchy and add it to the top layer to draw it on top of other elements
+		//float height = _target.layout.height;
+		//float width = _target.layout.width;
+		//_target.RemoveFromHierarchy();
+		//_target.style.position = Position.Absolute;
+		//_target.style.height = height;
+		//_target.style.width = width;
+		//_keyboardElement.Add(_target);
 
-		// Move target to the cursur
-		Vector3 cursorInKeyboardElementLocalPosition = _keyboardElement.TransformPoint(evt.position);
-		Vector3 targetOffset = new Vector3(target.layout.width / 2, target.layout.height / 2, 0);
-		target.transform.position = cursorInKeyboardElementLocalPosition - targetOffset;
+		//// Move target to the cursur
+		//Vector3 cursorInKeyboardElementLocalPosition = _keyboardElement.TransformPoint(evt.position);
+		//Vector3 targetOffset = new Vector3(_target.layout.width / 2, _target.layout.height / 2, 0);
+		//_target.transform.position = cursorInKeyboardElementLocalPosition - targetOffset;
 
 		// Save some values for target dragging calculations
-		_targetStartPosition = target.transform.position;
+		_targetStartPosition = _target.transform.position;
 		_pointerStartPosition = evt.position;
 
-		target.CapturePointer(evt.pointerId);
+		//_target.CapturePointer(evt.pointerId);
 
-		_canDrag = true;
+		//_canDrag = true;
+		_canDrag = false;
 	}
 
 	private void PointerMoveHandler(PointerMoveEvent evt)
 	{
-		if (_canDrag && target.HasPointerCapture(evt.pointerId))
+		if (_target == null)
 		{
-			Vector3 pointerDelta = evt.position - _pointerStartPosition;
+			return;
+		}
 
-			target.transform.position = new Vector2(
-				Mathf.Clamp(_targetStartPosition.x + pointerDelta.x, 0, _keyboardElement.worldBound.width - target.layout.width),
-				Mathf.Clamp(_targetStartPosition.y + pointerDelta.y, 0, _keyboardElement.worldBound.height - target.layout.height));
+		Vector3 pointerDelta = evt.position - _pointerStartPosition;
+
+		if (!_canDrag)
+		{
+			if (pointerDelta.magnitude > 5)
+			{
+				// Save some data about key element before dragging
+				_previousRowIndex = _keyboardElement.IndexOf(_target.parent);
+				_previousKeyIndex = _target.parent.IndexOf(_target);
+
+				// Extract a target from its hierarchy and add it to the top layer to draw it on top of other elements
+				float height = _target.layout.height;
+				float width = _target.layout.width;
+				_target.RemoveFromHierarchy();
+				_target.style.position = Position.Absolute;
+				_target.style.height = height;
+				_target.style.width = width;
+				_keyboardElement.Add(_target);
+
+				// Move target to the cursur
+				Vector3 cursorInKeyboardElementLocalPosition = _keyboardElement.TransformPoint(evt.position);
+				Vector3 targetOffset = new Vector3(_target.layout.width / 2, _target.layout.height / 2, 0);
+				_target.transform.position = cursorInKeyboardElementLocalPosition - targetOffset;
+
+				// Save some values for target dragging calculations
+				_targetStartPosition = _target.transform.position;
+				_pointerStartPosition = evt.position;
+
+				_target.CapturePointer(evt.pointerId);
+
+				_canDrag = true;
+			}
+		}
+
+		if (_canDrag && _target.HasPointerCapture(evt.pointerId))
+		{
+			_target.transform.position = new Vector2(
+				Mathf.Clamp(_targetStartPosition.x + pointerDelta.x, 0, _keyboardElement.worldBound.width - _target.layout.width),
+				Mathf.Clamp(_targetStartPosition.y + pointerDelta.y, 0, _keyboardElement.worldBound.height - _target.layout.height));
 		}
 	}
 
 	private void PointerUpHandler(PointerUpEvent evt)
 	{
-		if (_canDrag && target.HasPointerCapture(evt.pointerId))
+		if (_canDrag && _target.HasPointerCapture(evt.pointerId))
 		{
-			target.ReleasePointer(evt.pointerId);
+			_target.ReleasePointer(evt.pointerId);
 
 			RowElement closestRowElement = GetRowUnderCursor(evt);
 			KeyElement closestKeyElement = GetClosestKeyNearDroppedKey(closestRowElement, evt);
 			DropKey(closestRowElement, closestKeyElement, evt);
 
-			target = new VisualElement();
+			_target = null;
 			_canDrag = false;
 
 			OnKeyDroppedEvent?.Invoke();
@@ -175,10 +214,10 @@ public class DragAndDropManipulator : PointerManipulator, IDisposable
 			}
 		}
 
-		KeyData keyData = (target as KeyElement).KeyData;
+		KeyData keyData = (_target as KeyElement).KeyData;
 		int rowIndex = _keyboardElement.IndexOf(rowElement);
 
-		target.RemoveFromHierarchy();
+		_target.RemoveFromHierarchy();
 
 		try
 		{
@@ -194,6 +233,7 @@ public class DragAndDropManipulator : PointerManipulator, IDisposable
 
 	public void Dispose()
 	{
-		this.target = null;
+		UnregisterCallbacksFromTarget();
+		_target = null;
 	}
 }
