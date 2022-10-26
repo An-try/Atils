@@ -7,6 +7,8 @@ public class RowData
 	public int Height = DefaultValues.ROW_HEIGHT;
 	public List<KeyData> Keys = new List<KeyData>();
 
-	public RowData()
-	{ }
+	public RowData(int height)
+	{
+		Height = height;
+	}
 }

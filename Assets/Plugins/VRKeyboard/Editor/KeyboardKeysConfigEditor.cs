@@ -65,13 +65,13 @@ public class KeyboardKeysConfigEditor : UnityEditor.Editor
 		_addRowButton = new TextButton(_styleSheet, "Add Row", AddRowToConfig);
 
 		_keyboardRowsHeightInputField = new IntegerField("Keyboard Rows Height");
-		_keyboardRowsHeightInputField.BindProperty(_keyboardRowsHeightSerializedProperty);
+		_keyboardRowsHeightInputField.value = _config.KeyboardRowsHeight;
 		_keyboardRowsHeightInputField.RegisterValueChangedCallback(SetKeyboardRowsHeight);
 	}
 
 	private void SetKeyboardRowsHeight(ChangeEvent<int> output)
 	{
-		_root.Q<KeyboardElement>().SetRowsHeight(output.newValue);
+		_config.SetRowsHeight(output.newValue);
 	}
 
 	private void Compose()

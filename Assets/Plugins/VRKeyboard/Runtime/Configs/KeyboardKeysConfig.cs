@@ -24,7 +24,7 @@ public class KeyboardKeysConfig : ScriptableObject
 		if (Rows == null || Rows.Count <= 0)
 		{
 			Rows = new List<RowData>();
-			Rows.Add(new RowData());
+			Rows.Add(new RowData(KeyboardRowsHeight));
 		}
 
 		Rows.Last().Keys.Add(keyData);
@@ -57,6 +57,11 @@ public class KeyboardKeysConfig : ScriptableObject
 
 	public void RemoveKeyAt(int rowIndex, int keyIndex, bool removeRowIfEmpty = false)
 	{
+		if (rowIndex < 0 || rowIndex >= Rows.Count ||
+			keyIndex < 0 || keyIndex >= Rows[rowIndex].Keys.Count)
+		{
+		}
+
 		Rows[rowIndex].Keys.RemoveAt(keyIndex);
 
 		if (removeRowIfEmpty && Rows[rowIndex].Keys.Count <= 0)
@@ -69,7 +74,7 @@ public class KeyboardKeysConfig : ScriptableObject
 
 	public void AddRowAtEnd()
 	{
-		AddRowAtEnd(new RowData());
+		AddRowAtEnd(new RowData(KeyboardRowsHeight));
 	}
 
 	public void AddRowAtEnd(RowData rowData)
@@ -92,6 +97,14 @@ public class KeyboardKeysConfig : ScriptableObject
 		}
 
 		Rows.RemoveAt(rowIndex);
+
+		OnRowsUpdatedEvent?.Invoke(Rows);
+	}
+
+	public void SetRowsHeight(int height)
+	{
+		KeyboardRowsHeight = height;
+		Rows.ForEach(x => x.Height = KeyboardRowsHeight);
 
 		OnRowsUpdatedEvent?.Invoke(Rows);
 	}

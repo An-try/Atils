@@ -16,7 +16,7 @@ public class DragAndDropManipulator : PointerManipulator, IDisposable
 	private int _previousKeyIndex { get; set; } = default;
 	private Vector2 _targetStartPosition { get; set; } = default;
 	private Vector3 _pointerStartPosition { get; set; } = default;
-	private bool _enabled { get; set; } = false;
+	private bool _canDrag { get; set; } = false;
 
 	public DragAndDropManipulator(KeyboardKeysConfig config, KeyboardElement keyboardElement, List<VisualElement> targets)
 	{
@@ -70,14 +70,15 @@ public class DragAndDropManipulator : PointerManipulator, IDisposable
 		// Save some values for target dragging calculations
 		_targetStartPosition = target.transform.position;
 		_pointerStartPosition = evt.position;
+
 		target.CapturePointer(evt.pointerId);
 
-		_enabled = true;
+		_canDrag = true;
 	}
 
 	private void PointerMoveHandler(PointerMoveEvent evt)
 	{
-		if (_enabled && target.HasPointerCapture(evt.pointerId))
+		if (_canDrag && target.HasPointerCapture(evt.pointerId))
 		{
 			Vector3 pointerDelta = evt.position - _pointerStartPosition;
 
@@ -89,7 +90,7 @@ public class DragAndDropManipulator : PointerManipulator, IDisposable
 
 	private void PointerUpHandler(PointerUpEvent evt)
 	{
-		if (_enabled && target.HasPointerCapture(evt.pointerId))
+		if (_canDrag && target.HasPointerCapture(evt.pointerId))
 		{
 			target.ReleasePointer(evt.pointerId);
 
@@ -98,7 +99,7 @@ public class DragAndDropManipulator : PointerManipulator, IDisposable
 			DropKey(closestRowElement, closestKeyElement, evt);
 
 			target = new VisualElement();
-			_enabled = false;
+			_canDrag = false;
 
 			OnKeyDroppedEvent?.Invoke();
 		}
@@ -178,8 +179,17 @@ public class DragAndDropManipulator : PointerManipulator, IDisposable
 		int rowIndex = _keyboardElement.IndexOf(rowElement);
 
 		target.RemoveFromHierarchy();
-		_config.RemoveKeyAt(_previousRowIndex, _previousKeyIndex);
-		_config.AddKeyAt(keyData, rowIndex, indexForDroppedKey);
+
+		try
+		{
+			_config.RemoveKeyAt(_previousRowIndex, _previousKeyIndex);
+			_config.AddKeyAt(keyData, rowIndex, indexForDroppedKey);
+		}
+		catch (Exception e)
+		{
+			Debug.LogError("Reselect the config");
+			throw e;
+		}
 	}
 
 	public void Dispose()
