@@ -16,10 +16,8 @@ public class KeyboardKeysConfigEditor : UnityEditor.Editor
 	private SerializedProperty _keyboardRowsHeightSerializedProperty = default;
 	private IntegerField _keyboardRowsHeightInputField = default;
 
-	private Button _clearButton = default;
-	private Button _addKeyButton = default;
-	private Button _addRowButton = default;
-	private ToggleButton _toggleEditModeButton = default;
+	private TextButton _clearButton = default;
+	private TextButton _addRowButton = default;
 
 	private bool _keyEditMode = false;
 
@@ -37,7 +35,6 @@ public class KeyboardKeysConfigEditor : UnityEditor.Editor
 	{
 		RebuildKeyboardElement(rowDatas, _root.Q<KeyboardElement>());
 		RebuildDragAndDropManipulator();
-		ToggleInputFields(_toggleEditModeButton.IsToggled);
 
 		serializedObject.ApplyModifiedProperties();
 		EditorUtility.SetDirty(_config);
@@ -64,16 +61,8 @@ public class KeyboardKeysConfigEditor : UnityEditor.Editor
 		_root = new VisualElement();
 		_styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/Plugins/VRKeyboard/Runtime/Configs/KeyboardKeysConfig.uss");
 
-		_clearButton = new Button(ClearConfig);
-		_clearButton.text = "Clear";
-
-		_addKeyButton = new Button(AddKeyToConfig);
-		_addKeyButton.text = "Add Key";
-
-		_addRowButton = new Button(AddKeyToConfig);
-		_addRowButton.text = "+";
-
-		_toggleEditModeButton = new ToggleButton("Toggle edit mode (On)", "Toggle edit mode (Off)", _styleSheet, ToggleEditMode);
+		_clearButton = new TextButton(_styleSheet, "Clear", ClearConfig);
+		_addRowButton = new TextButton(_styleSheet, "Add Row", AddRowToConfig);
 
 		_keyboardRowsHeightInputField = new IntegerField("Keyboard Rows Height");
 		_keyboardRowsHeightInputField.BindProperty(_keyboardRowsHeightSerializedProperty);
@@ -88,8 +77,6 @@ public class KeyboardKeysConfigEditor : UnityEditor.Editor
 	private void Compose()
 	{
 		_root.Add(_clearButton);
-		_root.Add(_addKeyButton);
-		_root.Add(_toggleEditModeButton);
 
 		_root.Add(_keyboardRowsHeightInputField);
 
@@ -97,8 +84,13 @@ public class KeyboardKeysConfigEditor : UnityEditor.Editor
 		RebuildKeyboardElement(_config.Rows, keyboardElement);
 		_root.Add(keyboardElement);
 
+		_root.Add(_addRowButton);
+
+		KeyEditContainer keyEditContainer = new KeyEditContainer(_styleSheet);
+		keyEditContainer.OnKeyAddEvent += AddKeyToConfig;
+		_root.Add(keyEditContainer);
+
 		RebuildDragAndDropManipulator();
-		ToggleInputFields(_toggleEditModeButton.IsToggled);
 	}
 
 	#endregion
@@ -135,7 +127,7 @@ public class KeyboardKeysConfigEditor : UnityEditor.Editor
 
 	private void EnableKeyEditMode(KeyElement keyElement)
 	{
-		_root.Add(new KeyEditContainer(_styleSheet, keyElement.KeyData));
+		//_root.Add(new KeyEditContainer(_styleSheet, keyElement.KeyData));
 	}
 
 	private void DisableKeyEditMode()
@@ -145,31 +137,24 @@ public class KeyboardKeysConfigEditor : UnityEditor.Editor
 
 	#endregion
 
-	private void AddKeyToConfig()
-	{
-		_config.AddNewKey();
-	}
-
 	private void ClearConfig()
 	{
 		_config.Clear();
 	}
 
-	private void AddRowToConfig()
+	private void AddKeyToConfig(KeyData keyData)
 	{
-		_config.AddNewRow();
+		_config.AddKeyAtEnd(keyData);
 	}
 
-	public void AddKey(RowElement rowElement, KeyElement keyElement)
+	private void AddRowToConfig()
 	{
-		keyElement.OnPointerUpEvent += EnableKeyEditMode;
-		rowElement.Add(keyElement);
+		_config.AddRowAtEnd();
 	}
 
 	private void RebuildKeyboardElement(List<RowData> rowDatas, KeyboardElement keyboardElement)
 	{
-		keyboardElement.Query<KeyElement>().ForEach(x => x.OnPointerUpEvent -= EnableKeyEditMode);
-		keyboardElement.Clear();
+		ClearKeyboardElement(keyboardElement);
 
 		if (rowDatas == null)
 		{
@@ -178,15 +163,27 @@ public class KeyboardKeysConfigEditor : UnityEditor.Editor
 
 		for (int i = 0; i < rowDatas.Count; i++)
 		{
-			RowElement rowElement = new RowElement(_styleSheet);
+			RowElement rowElement = new RowElement(_styleSheet, rowDatas[i]);
 
 			for (int j = 0; j < rowDatas[i].Keys.Count; j++)
 			{
-				AddKey(rowElement, new KeyElement(_styleSheet, "0"));
+				AddKeyElement(rowElement, new KeyElement(_styleSheet, rowDatas[i].Keys[j]));
 			}
 
 			keyboardElement.Add(rowElement);
 		}
+	}
+
+	private void ClearKeyboardElement(KeyboardElement keyboardElement)
+	{
+		keyboardElement.Query<KeyElement>().ForEach(x => x.OnPointerUpEvent -= EnableKeyEditMode);
+		keyboardElement.Clear();
+	}
+
+	private void AddKeyElement(RowElement rowElement, KeyElement keyElement)
+	{
+		keyElement.OnPointerUpEvent += EnableKeyEditMode;
+		rowElement.Add(keyElement);
 	}
 
 	private void RebuildDragAndDropManipulator()
@@ -196,11 +193,6 @@ public class KeyboardKeysConfigEditor : UnityEditor.Editor
 			_manipulator.OnKeyDroppedEvent -= OnKeyDropped;
 			_manipulator.Dispose();
 			_manipulator = null;
-		}
-
-		if (_toggleEditModeButton.IsToggled)
-		{
-			return;
 		}
 
 		UQueryBuilder<KeyElement> keyElements = _root.Query<KeyElement>();
@@ -213,19 +205,6 @@ public class KeyboardKeysConfigEditor : UnityEditor.Editor
 
 	private void OnKeyDropped()
 	{
-		ToggleInputFields(_toggleEditModeButton.IsToggled);
 		// update config
-	}
-
-	private void ToggleEditMode(bool isToggled)
-	{
-		RebuildDragAndDropManipulator();
-		ToggleInputFields(isToggled);
-	}
-
-	private void ToggleInputFields(bool isToggled)
-	{
-		List<KeyElement> keyElementsList = _root.Query<KeyElement>().ToList();
-		keyElementsList.ForEach(x => x.ToggleInputField(isToggled));
 	}
 }

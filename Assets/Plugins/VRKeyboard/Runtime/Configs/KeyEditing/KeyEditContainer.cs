@@ -1,147 +1,120 @@
+using System;
 using System.ComponentModel;
-using UnityEditor;
-using UnityEditor.UIElements;
-using UnityEngine;
 using UnityEngine.UIElements;
 
 public class KeyEditContainer : VisualElement
 {
+	public Action<KeyData> OnKeyAddEvent { get; set; }
+
 	private StyleSheet _styleSheet = default;
-	private KeyData _keyData = default;
+
+	public KeyEditContainer(StyleSheet styleSheet)
+	{
+		_styleSheet = styleSheet;
+
+		this.styleSheets.Add(_styleSheet);
+
+		AddNewKeyButton();
+	}
 
 	public KeyEditContainer(StyleSheet styleSheet, KeyData keyData)
 	{
 		_styleSheet = styleSheet;
-		_keyData = keyData;
 
 		this.styleSheets.Add(_styleSheet);
-		RebuildContent(_keyData);
+
+		RebuildEditContainer(keyData);
 	}
 
-	private void RebuildContent(KeyData keyData)
+	private void OnKeyDataChanged(KeyData keyData)
 	{
-		DestroyContent();
-
-		CreateMainDataContainer(keyData);
-		CreateAdditionalContainer(keyData);
+		RebuildEditContainer(keyData);
 	}
 
-	private void DestroyContent()
+	private void OnAddButtonClicked()
 	{
-		this.Clear();
+		KeyData keyData = this.Q<KeyDataElement>().KeyData;
+		
+		Clear();
+		AddNewKeyButton();
+
+		OnKeyAddEvent?.Invoke(keyData);
 	}
 
-	private void CreateMainDataContainer(KeyData keyData)
+	private void OnCancelButtonClicked()
+	{
+		Clear();
+		AddNewKeyButton();
+	}
+
+	private void AddNewKeyButton()
+	{
+		this.Add(new TextButton(_styleSheet, "New key", OnNewKeyButtonClicked));
+	}
+
+	private void OnNewKeyButtonClicked()
+	{
+		RebuildEditContainer(new KeyData());
+	}
+
+	private void RebuildEditContainer(KeyData keyData)
+	{
+		Clear();
+		CreateKeyContent(keyData);
+		CreateBottomButtons();
+	}
+
+	private void CreateKeyContent(KeyData keyData)
 	{
 		switch (keyData.KeyType)
 		{
 			case KeyTypes.Text:
-				CreateMainTextContainer(keyData);
+				CreateKeyTextDataElement(keyData);
 				break;
 			case KeyTypes.Image:
-				CreateMainImageContainer(keyData);
+				CreateKeyImageDataElement(keyData);
 				break;
 			default:
 				throw new InvalidEnumArgumentException(nameof(keyData.KeyType), (int)keyData.KeyType, typeof(KeyTypes));
 		}
 	}
 
-	private void CreateMainTextContainer(KeyData keyData)
+	private void CreateBottomButtons()
 	{
-		VisualElement mainTextContainer = new VisualElement();
-		mainTextContainer.style.height = 25;
-		mainTextContainer.style.marginTop = 5;
-		mainTextContainer.style.marginLeft = 5;
-		mainTextContainer.style.marginRight = 5;
-		mainTextContainer.style.marginBottom = 5;
-		mainTextContainer.style.flexDirection = FlexDirection.Row;
+		VisualElement bottomButtonsContainer = new VisualElement();
+		bottomButtonsContainer.style.flexDirection = FlexDirection.Row;
 
-		Label textLabel = new Label("Text:");
-		textLabel.styleSheets.Add(_styleSheet);
-		textLabel.style.unityTextAlign = TextAnchor.MiddleLeft;
-		
-		TextField textInputField = new TextField();
-		textInputField.styleSheets.Add(_styleSheet);
-		textInputField.style.minWidth = 25;
-		textInputField.value = keyData.Text;
+		TextButton addButton = CreateButtomTextButton("Add", 50, OnAddButtonClicked);
+		TextButton cancelButton = CreateButtomTextButton("Cancel", 50, OnCancelButtonClicked);
 
-		mainTextContainer.Add(textLabel);
-		mainTextContainer.Add(textInputField);
+		bottomButtonsContainer.Add(addButton);
+		bottomButtonsContainer.Add(cancelButton);
 
-		this.Add(mainTextContainer);
+		this.Add(bottomButtonsContainer);
 	}
 
-	private void CreateMainImageContainer(KeyData keyData)
+	private void CreateKeyTextDataElement(KeyData keyData)
 	{
-		VisualElement mainImageContainer = new VisualElement();
-		mainImageContainer.style.height = 50;
-		mainImageContainer.style.marginTop = 5;
-		mainImageContainer.style.marginLeft = 5;
-		mainImageContainer.style.marginRight = 5;
-		mainImageContainer.style.marginBottom = 5;
-		mainImageContainer.style.flexDirection = FlexDirection.Row;
-
-		ObjectField objectField = new ObjectField();
-		objectField.styleSheets.Add(_styleSheet);
-		objectField.style.width = 200;
-		objectField.style.height = 20;
-		objectField.objectType = typeof(Sprite);
-		//objectField.value = key.sprite;
-
-		int width = 50;
-		int height = 50;
-		IMGUIContainer imageContainer = new IMGUIContainer(() => DrawMainImage(objectField, width, height));
-		imageContainer.styleSheets.Add(_styleSheet);
-
-		mainImageContainer.Add(imageContainer);
-		mainImageContainer.Add(objectField);
-
-		this.Add(mainImageContainer);
+		KeyTextDataElement keyTextDataElement = new KeyTextDataElement(_styleSheet, keyData);
+		keyTextDataElement.OnKeyTypeChangedEvent += OnKeyDataChanged;
+		this.Add(keyTextDataElement);
 	}
 
-	public void DrawMainImage(ObjectField spriteField, int width, int height)
+	private void CreateKeyImageDataElement(KeyData keyData)
 	{
-		Texture2D texture = new Texture2D(width, height);
-		Object image = spriteField.value;
-
-		if (image != null)
-		{
-			texture = AssetPreview.GetAssetPreview(image);
-		}
-
-		GUILayout.Label("", GUILayout.Width(width), GUILayout.Height(height));
-		Rect freeRect = new Rect(0, 0, width, height);
-		GUI.DrawTexture(freeRect, texture);
+		KeyImageDataElement keyImageDataElement = new KeyImageDataElement(_styleSheet, keyData);
+		keyImageDataElement.OnKeyTypeChangedEvent += OnKeyDataChanged;
+		this.Add(keyImageDataElement);
 	}
 
-	private void OnMainImageChanged(ChangeEvent<Sprite> sprite)
+	private TextButton CreateButtomTextButton(string text, float widthPercent, Action onClick)
 	{
-		Debug.LogWarning("a");
-		Texture2D texture2D = AssetPreview.GetAssetPreview(sprite.newValue);
-		this.Q<IMGUIContainer>().style.backgroundImage = new StyleBackground(texture2D);
-	}
+		TextButton bottomButton = new TextButton(_styleSheet, text, onClick);
+		StyleLength styleLength = bottomButton.style.width;
+		Length length = Length.Percent(widthPercent);
+		styleLength.value = length;
+		bottomButton.style.width = styleLength;
 
-	private void CreateAdditionalContainer(KeyData keyData)
-	{
-		VisualElement widthDisplay = new VisualElement();
-		widthDisplay.style.height = 20;
-		widthDisplay.style.marginTop = 5;
-		widthDisplay.style.marginLeft = 5;
-		widthDisplay.style.marginRight = 5;
-		widthDisplay.style.marginBottom = 5;
-		widthDisplay.style.flexDirection = FlexDirection.Row;
-
-		Label widthLabel = new Label("Width:");
-		widthLabel.styleSheets.Add(_styleSheet);
-		widthLabel.style.unityTextAlign = TextAnchor.MiddleLeft;
-		widthDisplay.Add(widthLabel);
-
-		FloatField widthInputField = new FloatField();
-		widthInputField.styleSheets.Add(_styleSheet);
-		widthInputField.style.minWidth = 50;
-		widthInputField.value = keyData.Width;
-		widthDisplay.Add(widthInputField);
-
-		this.Add(widthDisplay);
+		return bottomButton;
 	}
 }

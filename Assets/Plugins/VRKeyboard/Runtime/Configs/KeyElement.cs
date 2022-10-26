@@ -1,5 +1,4 @@
 using System;
-using UnityEngine;
 using UnityEngine.UIElements;
 
 public class KeyElement : VisualElement
@@ -7,7 +6,8 @@ public class KeyElement : VisualElement
 	public Action<KeyElement> OnPointerUpEvent { get; set; }
 
 	public KeyData KeyData { get; } = default;
-	public KeyTextField TextElement => this.Q<KeyTextField>();
+	public KeyTextElement TextElement => this.Q<KeyTextElement>();
+	public KeyImageElement ImageElement => this.Q<KeyImageElement>();
 
 	public KeyElement(KeyElement keyElement)
 	{
@@ -18,46 +18,40 @@ public class KeyElement : VisualElement
 
 		this.KeyData = keyElement.KeyData;
 
-		this.Add(new KeyTextField(keyElement.TextElement));
+		if (keyElement.TextElement != null)
+		{
+			this.Add(new KeyTextElement(keyElement.TextElement));
+		}
+		if (keyElement.ImageElement != null)
+		{
+			this.Add(new KeyImageElement(keyElement.ImageElement));
+		}
+
+		this.style.width = KeyData.Width;
 
 		this.RegisterCallback<PointerDownEvent>(OnPointerDown);
 		this.RegisterCallback<PointerUpEvent>(OnPointerUp);
 	}
 
-	public KeyElement(StyleSheet styleSheet, string text)
+	public KeyElement(StyleSheet styleSheet, KeyData keyData)
 	{
 		this.styleSheets.Add(styleSheet);
 
-		this.Add(new KeyTextField(styleSheet, text));
+		this.KeyData = keyData;
+
+		if (keyData.KeyType == KeyTypes.Text)
+		{
+			this.Add(new KeyTextElement(styleSheet, keyData.Text, PickingMode.Ignore));
+		}
+		else
+		{
+			this.Add(new KeyImageElement(styleSheet, keyData.Sprite, PickingMode.Ignore));
+		}
+
+		this.style.width = KeyData.Width;
 
 		this.RegisterCallback<PointerDownEvent>(OnPointerDown);
 		this.RegisterCallback<PointerUpEvent>(OnPointerUp);
-	}
-
-	public void SetHeight(float height)
-	{
-		this.style.height = height;
-		TextElement.style.height = height;
-	}
-
-	public void EnableInputField()
-	{
-		ToggleInputField(true);
-	}
-
-	public void DisableInputField()
-	{
-		ToggleInputField(false);
-	}
-
-	public void ToggleInputField()
-	{
-		ToggleInputField(!this.Q<KeyTextField>().enabledSelf);
-	}
-
-	public void ToggleInputField(bool isToggled)
-	{
-		this.Q<KeyTextField>().SetEnabled(isToggled);
 	}
 
 	private void OnPointerDown(PointerDownEvent evt)

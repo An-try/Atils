@@ -13,17 +13,30 @@ MonoBehaviour:
   m_Name: KeyboardKeysConfig
   m_EditorClassIdentifier: 
   Rows:
-  - Keys:
-    - Content: 
-    - Content: 
-    - Content: 
-    - Content: 
-  - Keys:
-    - Content: 
-    - Content: 
-    - Content: 
-    - Content: 
-  - Keys:
-    - Content: 
-    - Content: 
-  KeyboardRowsHeight: 40
+  - Height: 50
+    Keys:
+    - KeyType: 0
+      Text: 0
+      SpriteGUID: 
+      Width: 50
+    - KeyType: 0
+      Text: 1
+      SpriteGUID: 
+      Width: 50
+  - Height: 50
+    Keys: []
+  - Height: 50
+    Keys: []
+  - Height: 50
+    Keys: []
+  - Height: 50
+    Keys:
+    - KeyType: 0
+      Text: 2
+      SpriteGUID: 
+      Width: 50
+    - KeyType: 1
+      Text: 
+      SpriteGUID: 
+      Width: 50
+  KeyboardRowsHeight: 50

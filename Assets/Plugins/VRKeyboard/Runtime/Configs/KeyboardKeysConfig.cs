@@ -12,9 +12,14 @@ public class KeyboardKeysConfig : ScriptableObject
 
 	public List<RowData> Rows = new List<RowData>();
 	// additional array for the new keys?
-	public int KeyboardRowsHeight = 40;
+	public int KeyboardRowsHeight = DefaultValues.ROW_HEIGHT;
 
-	public void AddNewKey()
+	public void AddKeyAtEnd()
+	{
+		AddKeyAtEnd(new KeyData());
+	}
+
+	public void AddKeyAtEnd(KeyData keyData)
 	{
 		if (Rows == null || Rows.Count <= 0)
 		{
@@ -22,48 +27,64 @@ public class KeyboardKeysConfig : ScriptableObject
 			Rows.Add(new RowData());
 		}
 
-		if (Rows.Last().Keys.Count >= 4)
-		{
-			Rows.Add(new RowData());
-		}
-
-		Rows.Last().Keys.Add(new KeyData());
+		Rows.Last().Keys.Add(keyData);
 
 		OnRowsUpdatedEvent?.Invoke(Rows);
 	}
 
-	public void AddKey(KeyData keyData, int rowIndex, int keyIndex)
+	public void AddKeyAt(KeyData keyData, int rowIndex, int keyIndex)
 	{
+		if (Rows == null || Rows.Count <= 0)
+		{
+			AddKeyAtEnd(keyData);
+			return;
+		}
+
+		if (rowIndex < 0 || rowIndex > Rows.Count)
+		{
+			throw new ArgumentOutOfRangeException();
+		}
+
+		if (keyIndex < 0 || keyIndex > Rows[rowIndex].Keys.Count)
+		{
+			throw new ArgumentOutOfRangeException();
+		}
+
 		Rows[rowIndex].Keys.Insert(keyIndex, keyData);
 
 		OnRowsUpdatedEvent?.Invoke(Rows);
 	}
 
-	public void RemoveKey(int rowIndex, int keyIndex, bool removeRowIfThereAreNoKeysLeft = true)
+	public void RemoveKeyAt(int rowIndex, int keyIndex, bool removeRowIfEmpty = false)
 	{
 		Rows[rowIndex].Keys.RemoveAt(keyIndex);
 
-		if (removeRowIfThereAreNoKeysLeft && Rows[rowIndex].Keys.Count <= 0)
+		if (removeRowIfEmpty && Rows[rowIndex].Keys.Count <= 0)
 		{
-			RemoveRow(rowIndex);
+			RemoveRowAt(rowIndex);
 		}
 
 		OnRowsUpdatedEvent?.Invoke(Rows);
 	}
 
-	public void AddNewRow()
+	public void AddRowAtEnd()
+	{
+		AddRowAtEnd(new RowData());
+	}
+
+	public void AddRowAtEnd(RowData rowData)
 	{
 		if (Rows == null)
 		{
 			Rows = new List<RowData>();
 		}
 
-		Rows.Add(new RowData());
+		Rows.Add(rowData);
 
 		OnRowsUpdatedEvent?.Invoke(Rows);
 	}
 
-	public void RemoveRow(int rowIndex)
+	public void RemoveRowAt(int rowIndex)
 	{
 		if (Rows == null || rowIndex < 0 || rowIndex >= Rows.Count)
 		{

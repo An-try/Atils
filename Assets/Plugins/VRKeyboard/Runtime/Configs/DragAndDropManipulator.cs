@@ -54,8 +54,12 @@ public class DragAndDropManipulator : PointerManipulator, IDisposable
 		_previousKeyIndex = target.parent.IndexOf(target);
 
 		// Extract a target from its hierarchy and add it to the top layer to draw it on top of other elements
+		float height = target.layout.height;
+		float width = target.layout.width;
 		target.RemoveFromHierarchy();
 		target.style.position = Position.Absolute;
+		target.style.height = height;
+		target.style.width = width;
 		_keyboardElement.Add(target);
 
 		// Move target to the cursur
@@ -67,6 +71,7 @@ public class DragAndDropManipulator : PointerManipulator, IDisposable
 		_targetStartPosition = target.transform.position;
 		_pointerStartPosition = evt.position;
 		target.CapturePointer(evt.pointerId);
+
 		_enabled = true;
 	}
 
@@ -128,6 +133,11 @@ public class DragAndDropManipulator : PointerManipulator, IDisposable
 	{
 		List<KeyElement> keyElementsList = rowElement.Query<KeyElement>().ToList();
 
+		if (keyElementsList.Count <= 0)
+		{
+			return null;
+		}
+
 		float cursorPositionInRowX = rowElement.TransformPoint(evt.position).x;
 		float minDistance = float.MaxValue;
 		KeyElement closestKeyElement = null;
@@ -149,19 +159,27 @@ public class DragAndDropManipulator : PointerManipulator, IDisposable
 
 	private void DropKey(RowElement rowElement, KeyElement closestKeyElement, PointerUpEvent evt)
 	{
-		int indexOfClosestKeyElement = rowElement.IndexOf(closestKeyElement);
-		int indexForDroppedKey = indexOfClosestKeyElement;
+		int indexForDroppedKey = 0;
 
-		float cursorPositionRelativeToClosestKeyElementX = closestKeyElement.TransformPoint(evt.position).x;
-		// If cursor is on the right side from the center of the nearest key
-		if (cursorPositionRelativeToClosestKeyElementX > closestKeyElement.layout.width / 2)
+		if (closestKeyElement != null)
 		{
-			indexForDroppedKey++;
+			int indexOfClosestKeyElement = rowElement.IndexOf(closestKeyElement);
+			indexForDroppedKey = indexOfClosestKeyElement;
+
+			float cursorPositionRelativeToClosestKeyElementX = closestKeyElement.TransformPoint(evt.position).x;
+			// If cursor is on the right side from the center of the nearest key
+			if (cursorPositionRelativeToClosestKeyElementX > closestKeyElement.layout.width / 2)
+			{
+				indexForDroppedKey++;
+			}
 		}
 
+		KeyData keyData = (target as KeyElement).KeyData;
+		int rowIndex = _keyboardElement.IndexOf(rowElement);
+
 		target.RemoveFromHierarchy();
-		_config.RemoveKey(_previousRowIndex, _previousKeyIndex);
-		_config.AddKey((target as KeyElement).KeyData, _keyboardElement.IndexOf(rowElement), indexForDroppedKey);
+		_config.RemoveKeyAt(_previousRowIndex, _previousKeyIndex);
+		_config.AddKeyAt(keyData, rowIndex, indexForDroppedKey);
 	}
 
 	public void Dispose()
