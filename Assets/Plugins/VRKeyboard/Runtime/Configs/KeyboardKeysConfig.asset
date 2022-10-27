@@ -47,8 +47,16 @@ MonoBehaviour:
       Text: 
       SpriteGUID: 22f29e2fa919d1946b1238d20aae75a2
       Width: 75
+    - KeyType: 1
+      Text: 
+      SpriteGUID: 22f29e2fa919d1946b1238d20aae75a2
+      Width: 50
   - Height: 50
     Keys:
+    - KeyType: 0
+      Text: Shift
+      SpriteGUID: 
+      Width: 75
     - KeyType: 1
       Text: 
       SpriteGUID: 

@@ -102,6 +102,7 @@ public class DragAndDropManipulator : IDisposable
 				_target.style.position = Position.Absolute;
 				_target.style.height = height;
 				_target.style.width = width;
+				SetVisualElementAndChildsAlpha(_target, 0.5f);
 				_keyboardElement.Add(_target);
 
 				// Move target to the cursur
@@ -137,11 +138,11 @@ public class DragAndDropManipulator : IDisposable
 			KeyElement closestKeyElement = GetClosestKeyNearDroppedKey(closestRowElement, evt);
 			DropKey(closestRowElement, closestKeyElement, evt);
 
-			_target = null;
-			_canDrag = false;
-
 			OnKeyDroppedEvent?.Invoke();
 		}
+
+		_target = null;
+		_canDrag = false;
 	}
 
 	private void PointerCaptureOutHandler(PointerCaptureOutEvent evt)
@@ -228,6 +229,22 @@ public class DragAndDropManipulator : IDisposable
 		{
 			Debug.LogError("Reselect the config");
 			throw e;
+		}
+	}
+
+	private void SetVisualElementAndChildsAlpha(VisualElement visualElement, float alpha)
+	{
+		Color backgroundColor = visualElement.resolvedStyle.backgroundColor;
+		backgroundColor.a = alpha;
+		visualElement.style.backgroundColor = backgroundColor;
+
+		Color unityBackgroundImageTintColor = visualElement.resolvedStyle.unityBackgroundImageTintColor;
+		unityBackgroundImageTintColor.a = alpha;
+		visualElement.style.unityBackgroundImageTintColor = unityBackgroundImageTintColor;
+
+		for (int i = 0; i < visualElement.childCount; i++)
+		{
+			SetVisualElementAndChildsAlpha(visualElement[i], alpha);
 		}
 	}
 
