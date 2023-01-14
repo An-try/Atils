@@ -1,3 +1,4 @@
+using Atils.Runtime.Pause;
 using Atils.Runtime.Pooling;
 using System.Collections;
 using System.Diagnostics;
@@ -21,6 +22,23 @@ public class PoolingTest : MonoBehaviour
 		StartTest();
 	}
 
+	private void Update()
+	{
+		UnityEngine.Debug.Log(_scenePool.GetAllObjectsOfType<SphereView>().Count);
+
+		if (Input.GetKeyDown(KeyCode.Space))
+		{
+			if (_scenePool.IsPaused)
+			{
+				_scenePool.Unpause();
+			}
+			else
+			{
+				_scenePool.Pause();
+			}
+		}
+	}
+
 	Stopwatch stopwatch;
 
 	private IEnumerator SpawnBalls()
@@ -32,9 +50,9 @@ public class PoolingTest : MonoBehaviour
 			for (int j = 0; j < 30; j++)
 			{
 				//_objectsPoolView.GetObject<SphereView>();
-				SphereView sphereView1 = _scenePool.GetObject<SphereView>();
-				SphereView sphereView2 = _scenePool.GetObject<SphereView>().SetPosition(new Vector3());
-				PoolObject poolObject = _scenePool.GetRandomObject<PoolObject>().SetPosition(new Vector3());
+				//SphereView sphereView1 = _scenePool.GetObject<SphereView>();
+				//SphereView sphereView2 = _scenePool.GetObject<SphereView>().SetPosition(new Vector3());
+				_scenePool.GetObject<SphereView>().SetPosition(new Vector3()).Initialize();
 
 				//float random = 10;
 
@@ -47,7 +65,8 @@ public class PoolingTest : MonoBehaviour
 
 				//sphereView.Rigidbody.velocity = direction * 10;
 			}
-			yield return new WaitForFixedUpdate();
+			yield return new PausableWaitForSeconds(Time.fixedDeltaTime, () => _scenePool.IsPaused);
+			//UnityEngine.Debug.Log(_scenePool.GetActiveObjectsOfType<SphereView>().Count);
 		}
 	}
 

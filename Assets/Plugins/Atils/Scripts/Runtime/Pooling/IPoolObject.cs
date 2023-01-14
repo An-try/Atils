@@ -15,8 +15,5 @@ namespace Atils.Runtime.Pooling
 		void Pause();
 		void Unpause();
 		void ReturnToPool(Action onReturnedToPool = null);
-
-		//void SetLocation(Vector3 position, Quaternion rotation, Vector3 localScale);
-		void Initialize();
 	}
 }

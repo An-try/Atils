@@ -12,6 +12,18 @@ namespace Atils.Runtime.Pooling
 
 		public int SomeValue = 0;
 
+		public override void UpdateObject(float timeStep)
+		{
+			base.UpdateObject(timeStep);
+
+			if (IsPaused)
+			{
+				return;
+			}
+
+			SomeValue++;
+		}
+
 		protected override void ResetObject()
 		{
 			SomeValue = 0;

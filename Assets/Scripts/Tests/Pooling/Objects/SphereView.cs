@@ -11,9 +11,9 @@ public class SphereView : PoolObject
 
 	Vector3 _direction = default;
 
-	public override void Initialize()
+	public void Initialize()
 	{
-		ReturnToPool(6);
+		ReturnToPool(5);
 
 		float random = 10;
 
@@ -30,6 +30,11 @@ public class SphereView : PoolObject
 	public override void UpdateObject(float timeStep)
 	{
 		base.UpdateObject(timeStep);
+
+		if (IsPaused)
+		{
+			return;
+		}
 
 		transform.Translate(_direction * 10 * timeStep, Space.World);
 	}

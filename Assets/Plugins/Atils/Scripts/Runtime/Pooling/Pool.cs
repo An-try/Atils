@@ -36,7 +36,8 @@ namespace Atils.Runtime.Pooling
 				Type objectType = _poolObjectPrefabs[i].GetType();
 				Type objectFactoryType = objectType.GetNestedType("Factory");
 
-				PlaceholderFactory<IPoolObject> factory = GenericMethodGenerator.GetGenericMethod(typeof(DiContainer), nameof(DiContainer.Resolve), _diContainer)
+				PlaceholderFactory<IPoolObject> factory = GenericMethodGenerator
+					.GetGenericMethod(typeof(DiContainer), nameof(DiContainer.Resolve), _diContainer)
 					.WithBindingFlags(BindingFlags.Instance | BindingFlags.Public)
 					.WithTypeArguments(objectFactoryType)
 					.Invoke<PlaceholderFactory<IPoolObject>>();

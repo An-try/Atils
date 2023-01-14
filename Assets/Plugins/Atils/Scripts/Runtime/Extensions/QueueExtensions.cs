@@ -20,5 +20,10 @@ namespace Atils.Runtime.Extensions
 
 			return false;
 		}
+
+		public static Queue<T> Copy<T>(this Queue<T> source)
+		{
+			return new Queue<T>(source.ToList());
+		}
 	}
 }

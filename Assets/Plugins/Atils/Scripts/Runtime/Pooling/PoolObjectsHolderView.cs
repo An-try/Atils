@@ -108,7 +108,6 @@ namespace Atils.Runtime.Pooling
 		{
 			// TODO
 			poolObject.GameObject.SetActive(true);
-			poolObject.Initialize();
 			_disabledPoolObjects.RemoveAt(_disabledPoolObjects.Count - 1);
 			_enabledPoolObjects.Add(poolObject);
 
