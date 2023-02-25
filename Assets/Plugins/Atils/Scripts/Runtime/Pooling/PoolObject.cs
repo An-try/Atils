@@ -16,16 +16,22 @@ namespace Atils.Runtime.Pooling
 		public GameObject GameObject => gameObject;
 		public Transform Transform => transform;
 
+		public bool IsActive => gameObject.activeSelf;
+
 		public virtual void UpdateObject(float timeStep)
 		{ }
 
 		public virtual void ReturnToPool(Action onReturnedToPool = null)
 		{
 			this.KillCoroutine(ref _returnToPoolCoroutine);
-			gameObject.SetActive(false);
-			ResetObject();
-			onReturnedToPool?.Invoke();
-			OnReturnedToPool?.Invoke(this);
+
+			if (IsActive)
+			{
+				gameObject.SetActive(false);
+				ResetObject();
+				onReturnedToPool?.Invoke();
+				OnReturnedToPool?.Invoke(this);
+			}
 		}
 
 		public virtual void ReturnToPool(float delay, Action onFinish = null)

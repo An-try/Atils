@@ -1,4 +1,7 @@
+using UnityEditor.Experimental.SceneManagement;
+using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Atils.Runtime.Extensions
 {
@@ -12,5 +15,24 @@ namespace Atils.Runtime.Extensions
 				coroutine = null;
 			}
 		}
+
+#if UNITY_EDITOR
+
+		public static void MarkSceneDirty(this MonoBehaviour monoBehaviour)
+		{
+			Scene scene = SceneManager.GetActiveScene();
+			EditorSceneManager.MarkSceneDirty(scene);
+		}
+
+		public static void MarkPrefabDirty(this MonoBehaviour monoBehaviour)
+		{
+			PrefabStage prefabStage = PrefabStageUtility.GetCurrentPrefabStage();
+			if (prefabStage != null)
+			{
+				EditorSceneManager.MarkSceneDirty(prefabStage.scene);
+			}
+		}
+
+#endif
 	}
 }

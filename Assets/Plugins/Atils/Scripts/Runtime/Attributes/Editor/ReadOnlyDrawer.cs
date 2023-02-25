@@ -1,8 +1,7 @@
-using Atils.Runtime.Attributes;
 using UnityEditor;
 using UnityEngine;
 
-namespace Atils.Editor.GUIDrawers
+namespace Atils.Runtime.Attributes.Editor
 {
 	[CustomPropertyDrawer(typeof(ReadOnlyAttribute))]
 	public class ReadOnlyDrawer : PropertyDrawer
