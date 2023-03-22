@@ -1,3 +1,4 @@
+using Atils.Runtime.Extensions;
 using Atils.Runtime.Inputs;
 using Atils.Runtime.ScreenUtils;
 using System;
@@ -88,7 +89,7 @@ namespace Atils.Runtime.Utils
 
 		public void RotateToDefault()
 		{
-			KillCoroutine(ref _rotateToDefaultCoroutine);
+			this.KillCoroutine(ref _rotateToDefaultCoroutine);
 			_rotateToDefaultCoroutine = StartCoroutine(RotateToDefaultCoroutine());
 		}
 
@@ -150,15 +151,6 @@ namespace Atils.Runtime.Utils
 			}
 
 			RotateObject(pointerAxisX, pointerAxisY, timeStep, multiplier);
-		}
-
-		private void KillCoroutine(ref Coroutine coroutine)
-		{
-			if (coroutine != null)
-			{
-				StopCoroutine(coroutine);
-				coroutine = null;
-			}
 		}
 
 		private IEnumerator RotateToDefaultCoroutine()

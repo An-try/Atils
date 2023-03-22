@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 namespace BrainBasedVR.Runtime.Utils
 {
@@ -6,8 +7,6 @@ namespace BrainBasedVR.Runtime.Utils
 	{
 		public static float CentimetersToMeters(this string source)
 		{
-			// TODO make null checkings
-
 			if (!int.TryParse(source, out int centimeters))
 			{
 				throw new Exception(); // TODO make correct exception
@@ -16,11 +15,14 @@ namespace BrainBasedVR.Runtime.Utils
 			return (float)centimeters / 100f;
 		}
 
-		public static float CentimetersToMeters(this float source) // this is not a string extension
+		public static bool Contains(this string source, string toCheck, StringComparison comp)
 		{
-			// TODO make null checkings
+			return source?.IndexOf(toCheck, comp) >= 0;
+		}
 
-			return source / 100f;
+		public static bool IsAll(this string source, char check)
+		{
+			return string.Concat(source.Distinct()).Equals(check);
 		}
 	}
 }
