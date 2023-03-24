@@ -10,7 +10,7 @@ using Zenject;
 
 namespace Atils.Runtime.Pooling
 {
-	public abstract class Pool : PausableMonoBehaviour
+	public abstract class Pool : PausableMonoBehaviour, IInitializable, IDisposable
 	{
 		[SerializeField] protected List<PoolObject> _poolObjectPrefabs = default;
 
@@ -20,10 +20,13 @@ namespace Atils.Runtime.Pooling
 
 		public virtual List<PoolObject> PoolObjectPrefabs => _poolObjectPrefabs;
 
-		protected virtual void Awake()
+		public virtual void Initialize()
 		{
 			InitializePoolObjectHolders();
 		}
+
+		public virtual void Dispose()
+		{ }
 
 		protected virtual void InitializePoolObjectHolders()
 		{
@@ -76,17 +79,52 @@ namespace Atils.Runtime.Pooling
 
 		public virtual PoolObject GetObjectPrefab<T>() where T : IPoolObject
 		{
-			return _poolObjectPrefabs.Find(x => x.GetType() == typeof(T));
+			return GetObjectPrefab(typeof(T));
+		}
+
+		public virtual PoolObject GetObjectPrefab(Type type)
+		{
+			return _poolObjectPrefabs.Find(x => x.GetType() == type);
 		}
 
 		public virtual T GetObject<T>() where T : IPoolObject
 		{
-			return (T)GetPoolObjectsHolderViewOfType<T>().GetObject();
+			return (T)GetObject(typeof(T));
+		}
+
+		public virtual IPoolObject GetObject(Type type)
+		{
+			return GetPoolObjectsHolderViewOfType(type).GetObject();
 		}
 
 		public virtual T GetRandomObject<T>() where T : IPoolObject
 		{
-			return (T)GetPoolObjectsHolderViewsOfType<T>().GetRandom().GetObject();
+			return (T)GetRandomObject(typeof(T));
+		}
+
+		public virtual IPoolObject GetRandomObject(Type type)
+		{
+			return GetPoolObjectsHolderViewsOfType(type).GetRandom().GetObject();
+		}
+
+		/// <summary>
+		/// Get a copy of the list of active and inactive objects
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
+		public virtual List<IPoolObject> GetAllObjectsOfType<T>() where T : IPoolObject
+		{
+			return GetAllObjectsOfType(typeof(T));
+		}
+
+		/// <summary>
+		/// Get a copy of the list of active and inactive objects
+		/// </summary>
+		/// <param name="type"></param>
+		/// <returns></returns>
+		public virtual List<IPoolObject> GetAllObjectsOfType(Type type)
+		{
+			return GetPoolObjectsHolderViewOfType(type).AllObjects;
 		}
 
 		/// <summary>
@@ -106,23 +144,23 @@ namespace Atils.Runtime.Pooling
 		}
 
 		/// <summary>
-		/// Get a copy of the list of active and inactive objects
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <returns></returns>
-		public virtual List<IPoolObject> GetAllObjectsOfType<T>() where T : IPoolObject
-		{
-			return GetPoolObjectsHolderViewOfType<T>().AllObjects;
-		}
-
-		/// <summary>
 		/// Get a copy of the list of active objects
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <returns></returns>
 		public virtual List<IPoolObject> GetActiveObjectsOfType<T>() where T : IPoolObject
 		{
-			return GetPoolObjectsHolderViewOfType<T>().ActiveObjects;
+			return GetActiveObjectsOfType(typeof(T));
+		}
+
+		/// <summary>
+		/// Get a copy of the list of active objects
+		/// </summary>
+		/// <param name="type"></param>
+		/// <returns></returns>
+		public virtual List<IPoolObject> GetActiveObjectsOfType(Type type)
+		{
+			return GetPoolObjectsHolderViewOfType(type).ActiveObjects;
 		}
 
 		/// <summary>
@@ -132,7 +170,17 @@ namespace Atils.Runtime.Pooling
 		/// <returns></returns>
 		public virtual List<IPoolObject> GetInactiveObjectsOfType<T>() where T : IPoolObject
 		{
-			return GetPoolObjectsHolderViewOfType<T>().InactiveObjects;
+			return GetInactiveObjectsOfType(typeof(T));
+		}
+
+		/// <summary>
+		/// Get a copy of the list of inactive objects
+		/// </summary>
+		/// <param name="type"></param>
+		/// <returns></returns>
+		public virtual List<IPoolObject> GetInactiveObjectsOfType(Type type)
+		{
+			return GetPoolObjectsHolderViewOfType(type).InactiveObjects;
 		}
 
 		public virtual void ReturnToPoolAllObjects()
@@ -145,7 +193,12 @@ namespace Atils.Runtime.Pooling
 
 		public virtual void ReturnToPoolAllObjectsOfType<T>() where T : IPoolObject
 		{
-			GetPoolObjectsHolderViewOfType<T>().ReturnToPoolAllObjects();
+			ReturnToPoolAllObjectsOfType(typeof(T));
+		}
+
+		public virtual void ReturnToPoolAllObjectsOfType(Type type)
+		{
+			GetPoolObjectsHolderViewOfType(type).ReturnToPoolAllObjects();
 		}
 
 		protected override void OnPaused()
@@ -166,16 +219,26 @@ namespace Atils.Runtime.Pooling
 
 		protected virtual PoolObjectsHolderView GetPoolObjectsHolderViewOfType<T>()
 		{
-			return _poolObjectsHolderViews[typeof(T)];
+			return GetPoolObjectsHolderViewOfType(typeof(T));
+		}
+
+		protected virtual PoolObjectsHolderView GetPoolObjectsHolderViewOfType(Type type)
+		{
+			return _poolObjectsHolderViews[type];
 		}
 
 		protected virtual List<PoolObjectsHolderView> GetPoolObjectsHolderViewsOfType<T>()
+		{
+			return GetPoolObjectsHolderViewsOfType(typeof(T));
+		}
+
+		protected virtual List<PoolObjectsHolderView> GetPoolObjectsHolderViewsOfType(Type type)
 		{
 			List<PoolObjectsHolderView> poolObjectsHolderViews = new List<PoolObjectsHolderView>();
 
 			foreach (KeyValuePair<Type, PoolObjectsHolderView> keyValuePair in _poolObjectsHolderViews)
 			{
-				if (keyValuePair.Key.IsSubclassOf(typeof(T)) || keyValuePair.Key == typeof(T))
+				if (keyValuePair.Key.IsSubclassOf(type) || keyValuePair.Key == type)
 				{
 					poolObjectsHolderViews.Add(keyValuePair.Value);
 				}

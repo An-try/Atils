@@ -9,13 +9,7 @@ public class PoolingTest : MonoBehaviour
 {
 	[SerializeField] private SphereView sphereView;
 
-	private ScenePool _scenePool = default;
-
-	[Inject]
-	private void Construct(ScenePool scenePool)
-	{
-		_scenePool = scenePool;
-	}
+	[Inject] private ScenePool _scenePool = default;
 
 	private void Start()
 	{
@@ -70,7 +64,6 @@ public class PoolingTest : MonoBehaviour
 		}
 	}
 
-	[ContextMenu("StartTest")]
 	private async void StartTest()
 	{
 		StartCoroutine(SpawnBalls());

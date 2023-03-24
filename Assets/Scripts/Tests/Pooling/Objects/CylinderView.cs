@@ -16,6 +16,6 @@ public class CylinderView : PoolObject
 		}
 	}
 
-	protected override void ResetObject()
+	protected override void OnAfterReturnedToPool()
 	{ }
 }

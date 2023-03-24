@@ -20,7 +20,7 @@ namespace Atils.Runtime.Pooling
 
 			BindPoolObjectFactories(diContainer, pool);
 
-			diContainer.Bind<T>().FromComponentInNewPrefab(pool).AsSingle().NonLazy();
+			diContainer.BindInterfacesAndSelfTo<T>().FromComponentInNewPrefab(pool).AsSingle().NonLazy();
 		}
 
 		private static bool ValidatePoolObjects(Pool pool)
@@ -37,7 +37,6 @@ namespace Atils.Runtime.Pooling
 				if (objectFactoryType == null)
 				{
 					/// How to fix this: <see cref="SamplePoolObject.Factory"/>
-					
 					Debug.LogError(nameof(PoolingSystemBinder) + ": There is no nested \"" + FACTORY_CLASS_NAME + "\" class in the \"" + objectType + "\" class. " +
 						"You need to declare the \"" + FACTORY_CLASS_NAME + "\" class inherited from \"PlaceholderFactory<IPoolObject>\". " +
 						"Also check the namings.");
@@ -51,7 +50,6 @@ namespace Atils.Runtime.Pooling
 					if (objectFactoryType != null && !(objectFactoryInstance is PlaceholderFactory<IPoolObject>))
 					{
 						/// How to fix this: <see cref="SamplePoolObject.Factory"/>
-
 						Debug.LogError(nameof(PoolingSystemBinder) + ": The nested \"" + FACTORY_CLASS_NAME + "\" class in the \"" + objectType + "\" " +
 							"class does not inherit from \"PlaceholderFactory<IPoolObject>\".");
 						isSuccess = false;

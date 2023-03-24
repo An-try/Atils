@@ -29,8 +29,6 @@ public class SphereView : PoolObject
 
 	public override void UpdateObject(float timeStep)
 	{
-		base.UpdateObject(timeStep);
-
 		if (IsPaused)
 		{
 			return;
@@ -39,7 +37,7 @@ public class SphereView : PoolObject
 		transform.Translate(_direction * 10 * timeStep, Space.World);
 	}
 
-	protected override void ResetObject()
+	protected override void OnAfterReturnedToPool()
 	{
 		//Rigidbody.velocity = new Vector3();
 	}

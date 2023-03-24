@@ -8,7 +8,12 @@ namespace Atils.Runtime.Pooling
 {
 	public abstract class PoolObject : PausableMonoBehaviour, IPoolObject
 	{
-		public Action<IPoolObject> OnReturnedToPool { get; set; }
+		public Action<IPoolObject> OnReturnedToPoolEvent { get; set; }
+
+		/// <summary>
+		/// Prevention of looping when returning to the pool.
+		/// </summary>
+		private bool _isReturningToPool = false;
 
 		private Coroutine _returnToPoolCoroutine = default;
 
@@ -18,23 +23,36 @@ namespace Atils.Runtime.Pooling
 
 		public bool IsActive => gameObject.activeSelf;
 
-		public virtual void UpdateObject(float timeStep)
-		{ }
-
-		public virtual void ReturnToPool(Action onReturnedToPool = null)
+		protected virtual void OnDestroy()
 		{
+			this.KillCoroutine(ref _returnToPoolCoroutine);
+			OnReturnedToPoolEvent = null;
+		}
+
+		public void ReturnToPool(Action onReturnedToPool = null)
+		{
+			if (_isReturningToPool)
+			{
+				return;
+			}
+
+			_isReturningToPool = true;
+
 			this.KillCoroutine(ref _returnToPoolCoroutine);
 
 			if (IsActive)
 			{
+				OnPreReturnedToPool();
 				gameObject.SetActive(false);
-				ResetObject();
+				OnAfterReturnedToPool();
 				onReturnedToPool?.Invoke();
-				OnReturnedToPool?.Invoke(this);
+				OnReturnedToPoolEvent?.Invoke(this);
 			}
+
+			_isReturningToPool = false;
 		}
 
-		public virtual void ReturnToPool(float delay, Action onFinish = null)
+		public void ReturnToPool(float delay, Action onFinish = null)
 		{
 			if (delay <= 0)
 			{
@@ -47,28 +65,26 @@ namespace Atils.Runtime.Pooling
 			}
 		}
 
+		public virtual void UpdateObject(float timeStep)
+		{ }
+
+		protected virtual void OnPreReturnedToPool()
+		{ }
+
+		protected virtual void OnAfterReturnedToPool()
+		{ }
+
 		protected override void OnPaused()
 		{ }
 
 		protected override void OnUnpaused()
 		{ }
 
-		/// <summary>
-		/// Called then returning to pool.
-		/// </summary>
-		protected abstract void ResetObject();
-
 		private IEnumerator ReturnToPoolCoroutine(float delay, Action onFinish = null)
 		{
 			yield return new PausableWaitForSeconds(delay, () => IsPaused);
 
 			ReturnToPool(onFinish);
-		}
-
-		protected virtual void OnDestroy()
-		{
-			this.KillCoroutine(ref _returnToPoolCoroutine);
-			OnReturnedToPool = null;
 		}
 	}
 }

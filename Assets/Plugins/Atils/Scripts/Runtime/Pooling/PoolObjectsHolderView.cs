@@ -98,7 +98,7 @@ namespace Atils.Runtime.Pooling
 			poolObject.Name = _poolObjectName;
 			poolObject.Transform.parent = parent;
 			poolObject.GameObject.SetActive(false);
-			poolObject.OnReturnedToPool += OnObjectReturnedToPool;
+			poolObject.OnReturnedToPoolEvent += OnObjectReturnedToPool;
 
 			_disabledPoolObjects.Add(poolObject);
 			return poolObject;

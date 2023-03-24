@@ -10,23 +10,38 @@ namespace Atils.Runtime.Pooling
 		public class Factory : PlaceholderFactory<IPoolObject>
 		{ }
 
-		public int SomeValue = 0;
+		public int SomeValue1 = 0;
+		public int SomeValue2 = 0;
 
 		public override void UpdateObject(float timeStep)
 		{
-			base.UpdateObject(timeStep);
-
 			if (IsPaused)
 			{
 				return;
 			}
 
-			SomeValue++;
+			SomeValue1++;
+			SomeValue2++;
 		}
 
-		protected override void ResetObject()
+		protected override void OnPreReturnedToPool()
 		{
-			SomeValue = 0;
+			SomeValue1 = 0;
+		}
+
+		protected override void OnAfterReturnedToPool()
+		{
+			SomeValue2 = 0;
+		}
+
+		protected override void OnPaused()
+		{
+			// Do anything you want when the game pauses
+		}
+
+		protected override void OnUnpaused()
+		{
+			// Do anything you want when the game unpauses
 		}
 	}
 }
