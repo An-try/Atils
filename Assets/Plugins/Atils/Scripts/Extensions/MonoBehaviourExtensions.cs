@@ -1,7 +1,10 @@
-using UnityEditor.Experimental.SceneManagement;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+
+#if UNITY_EDITOR
+using UnityEditor.Experimental.SceneManagement;
+using UnityEditor.SceneManagement;
+#endif
 
 namespace Atils.Runtime.Extensions
 {
