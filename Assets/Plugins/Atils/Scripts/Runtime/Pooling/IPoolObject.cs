@@ -5,6 +5,7 @@ namespace Atils.Runtime.Pooling
 {
 	public interface IPoolObject
 	{
+		Action<IPoolObject> OnInitializedEvent { get; set; }
 		Action<IPoolObject> OnReturnedToPoolEvent { get; set; }
 
 		string Name { set; get; }

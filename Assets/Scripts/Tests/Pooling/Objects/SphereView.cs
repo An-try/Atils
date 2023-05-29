@@ -1,14 +1,17 @@
 using Atils.Runtime.Pooling;
+using System;
 using UnityEngine;
 using Zenject;
+using Random = UnityEngine.Random;
 
 public class SphereView : PoolObject
 {
-	public Rigidbody Rigidbody;
-
 	public class Factory : PlaceholderFactory<IPoolObject>
 	{ }
 
+	public override Action<IPoolObject> OnInitializedEvent { get; set; }
+
+	public Rigidbody Rigidbody;
 	Vector3 _direction = default;
 
 	public void Initialize()
@@ -25,6 +28,7 @@ public class SphereView : PoolObject
 		Vector3 direction = (Vector3.forward + randomScatter).normalized;
 
 		_direction = direction;
+		OnInitializedEvent?.Invoke(this);
 	}
 
 	public override void UpdateObject(float timeStep)

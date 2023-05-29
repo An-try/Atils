@@ -1,6 +1,5 @@
 using Atils.Runtime.Extensions;
 using Atils.Runtime.Inputs;
-using Atils.Runtime.ScreenUtils;
 using System;
 using System.Collections;
 using UnityEngine;
@@ -24,8 +23,7 @@ namespace Atils.Runtime.Utils
 		[SerializeField] private float _rotationSpeedDebug = 1000;
 #endif
 
-		private IInputService _inputService = default;
-		private IScreenService _screenService = default;
+		[Inject] private IInputService _inputService = default;
 
 		private Quaternion _defaultRotation = default;
 
@@ -38,13 +36,6 @@ namespace Atils.Runtime.Utils
 		private float _defaultRightClamp = default;
 
 		public bool IsRotationAllowed => _allowRotation;
-
-		[Inject]
-		private void Construct(IInputService inputService, IScreenService screenService)
-		{
-			_inputService = inputService;
-			_screenService = screenService;
-		}
 
 		private void Awake()
 		{

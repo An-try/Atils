@@ -21,13 +21,7 @@ namespace Atils.Runtime.Utils
 		[SerializeField] private float _scalingMultiplierEditor = 1;
 #endif
 
-		private IInputService _inputService = default;
-
-		[Inject]
-		private void Construct(IInputService inputService)
-		{
-			_inputService = inputService;
-		}
+		[Inject] private IInputService _inputService = default;
 
 		private void OnEnable()
 		{

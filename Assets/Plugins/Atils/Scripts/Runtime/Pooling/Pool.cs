@@ -12,6 +12,10 @@ namespace Atils.Runtime.Pooling
 {
 	public abstract class Pool : PausableMonoBehaviour, IInitializable, IDisposable
 	{
+		public Action<IPoolObject> OnObjectPulledOutFromPoolEvent { get; set; }
+		public Action<IPoolObject> OnObjectPulledOutFromPoolAndInitializedEvent { get; set; }
+		public Action<IPoolObject> OnObjectReturnedToPoolEvent { get; set; }
+
 		[SerializeField] protected List<PoolObject> _poolObjectPrefabs = default;
 
 		[Inject] protected DiContainer _diContainer = default;
@@ -23,10 +27,39 @@ namespace Atils.Runtime.Pooling
 		public virtual void Initialize()
 		{
 			InitializePoolObjectHolders();
+
+			foreach (KeyValuePair<Type, PoolObjectsHolderView> keyValuePair in _poolObjectsHolderViews)
+			{
+				keyValuePair.Value.OnObjectPulledOutFromPoolEvent += OnObjectPulledOutFromPool;
+				keyValuePair.Value.OnObjectPulledOutFromPoolAndInitializedEvent += OnObjectPulledOutFromPoolAndInitialized;
+				keyValuePair.Value.OnObjectReturnedToPoolEvent += OnObjectReturnedToPool;
+			}
 		}
 
 		public virtual void Dispose()
-		{ }
+		{
+			foreach (KeyValuePair<Type, PoolObjectsHolderView> keyValuePair in _poolObjectsHolderViews)
+			{
+				keyValuePair.Value.OnObjectPulledOutFromPoolEvent -= OnObjectPulledOutFromPool;
+				keyValuePair.Value.OnObjectPulledOutFromPoolAndInitializedEvent -= OnObjectPulledOutFromPoolAndInitialized;
+				keyValuePair.Value.OnObjectReturnedToPoolEvent -= OnObjectReturnedToPool;
+			}
+		}
+
+		private void OnObjectPulledOutFromPool(IPoolObject poolObject)
+		{
+			OnObjectPulledOutFromPoolEvent?.Invoke(poolObject);
+		}
+
+		private void OnObjectPulledOutFromPoolAndInitialized(IPoolObject poolObject)
+		{
+			OnObjectPulledOutFromPoolAndInitializedEvent?.Invoke(poolObject);
+		}
+
+		private void OnObjectReturnedToPool(IPoolObject poolObject)
+		{
+			OnObjectReturnedToPoolEvent?.Invoke(poolObject);
+		}
 
 		protected virtual void InitializePoolObjectHolders()
 		{

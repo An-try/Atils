@@ -1,4 +1,5 @@
 using Atils.Runtime.Pause;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -8,6 +9,10 @@ namespace Atils.Runtime.Pooling
 {
 	public class PoolObjectsHolderView : PausableMonoBehaviour
 	{
+		public Action<IPoolObject> OnObjectPulledOutFromPoolEvent { get; set; }
+		public Action<IPoolObject> OnObjectPulledOutFromPoolAndInitializedEvent { get; set; }
+		public Action<IPoolObject> OnObjectReturnedToPoolEvent { get; set; }
+
 		private PlaceholderFactory<IPoolObject> _factory = default;
 		private string _poolObjectName = default;
 
@@ -75,10 +80,16 @@ namespace Atils.Runtime.Pooling
 			}
 		}
 
+		private void OnObjectPulledOutFromPoolAndInitialized(IPoolObject poolObject)
+		{
+			OnObjectPulledOutFromPoolAndInitializedEvent?.Invoke(poolObject);
+		}
+
 		private void OnObjectReturnedToPool(IPoolObject poolObject)
 		{
 			_enabledPoolObjects.Remove(poolObject);
 			_disabledPoolObjects.Add(poolObject);
+			OnObjectReturnedToPoolEvent?.Invoke(poolObject);
 		}
 
 		private IPoolObject GetAvailableObjectOrCreateNew()
@@ -98,6 +109,7 @@ namespace Atils.Runtime.Pooling
 			poolObject.Name = _poolObjectName;
 			poolObject.Transform.parent = parent;
 			poolObject.GameObject.SetActive(false);
+			poolObject.OnInitializedEvent += OnObjectPulledOutFromPoolAndInitialized;
 			poolObject.OnReturnedToPoolEvent += OnObjectReturnedToPool;
 
 			_disabledPoolObjects.Add(poolObject);
@@ -116,6 +128,7 @@ namespace Atils.Runtime.Pooling
 				poolObject.Pause();
 			}
 
+			OnObjectPulledOutFromPoolEvent?.Invoke(poolObject);
 			return poolObject;
 		}
 	}
