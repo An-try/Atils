@@ -7,13 +7,6 @@ public class CylinderView : PoolObject
 	public class Factory : PlaceholderFactory<IPoolObject>
 	{ }
 
-	public override Action<IPoolObject> OnInitializedEvent { get; set; }
-
-	public void Initialize()
-	{
-		OnInitializedEvent?.Invoke(this);
-	}
-
 	public override void UpdateObject(float timeStep)
 	{
 		base.UpdateObject(timeStep);

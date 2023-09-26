@@ -107,7 +107,7 @@ namespace Atils.Runtime.Pooling
 			IPoolObject poolObject = _factory.Create();
 
 			poolObject.Name = _poolObjectName;
-			poolObject.Transform.parent = parent;
+			poolObject.Transform.SetParent(parent);
 			poolObject.GameObject.SetActive(false);
 			poolObject.OnInitializedEvent += OnObjectPulledOutFromPoolAndInitialized;
 			poolObject.OnReturnedToPoolEvent += OnObjectReturnedToPool;

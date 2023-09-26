@@ -22,15 +22,8 @@ namespace Atils.Runtime.Pooling
 		public class Factory : PlaceholderFactory<IPoolObject>
 		{ }
 
-		public override Action<IPoolObject> OnInitializedEvent { get; set; }
-
 		public int SomeValue1 = 0;
 		public int SomeValue2 = 0;
-
-		public void Initialize()
-		{
-			OnInitializedEvent?.Invoke(this);
-		}
 
 		public override void UpdateObject(float timeStep)
 		{

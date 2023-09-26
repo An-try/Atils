@@ -9,12 +9,10 @@ public class SphereView : PoolObject
 	public class Factory : PlaceholderFactory<IPoolObject>
 	{ }
 
-	public override Action<IPoolObject> OnInitializedEvent { get; set; }
-
 	public Rigidbody Rigidbody;
 	Vector3 _direction = default;
 
-	public void Initialize()
+	public override void Initialize()
 	{
 		ReturnToPool(5);
 
@@ -28,7 +26,8 @@ public class SphereView : PoolObject
 		Vector3 direction = (Vector3.forward + randomScatter).normalized;
 
 		_direction = direction;
-		OnInitializedEvent?.Invoke(this);
+
+		base.Initialize();
 	}
 
 	public override void UpdateObject(float timeStep)

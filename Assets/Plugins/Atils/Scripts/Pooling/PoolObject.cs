@@ -8,7 +8,7 @@ namespace Atils.Runtime.Pooling
 {
 	public abstract class PoolObject : PausableMonoBehaviour, IPoolObject
 	{
-		public abstract Action<IPoolObject> OnInitializedEvent { get; set; }
+		public Action<IPoolObject> OnInitializedEvent { get; set; }
 		public Action<IPoolObject> OnReturnedToPoolEvent { get; set; }
 
 		/// <summary>
@@ -29,6 +29,11 @@ namespace Atils.Runtime.Pooling
 			this.KillCoroutine(ref _returnToPoolCoroutine);
 			OnInitializedEvent = null;
 			OnReturnedToPoolEvent = null;
+		}
+
+		public virtual void Initialize()
+		{
+			OnInitializedEvent?.Invoke(this);
 		}
 
 		public void ReturnToPool(Action onReturnedToPool = null)

@@ -8,9 +8,9 @@ using UnityEngine;
 [Serializable]
 public class ProtectedFloat
 {
-    [SerializeField, JsonRequired] private byte[] _key;
-    [SerializeField, JsonRequired] private byte[] _IV;
-    [SerializeField, JsonRequired] private byte[] _encryptedValue;
+    [SerializeField, JsonProperty] private byte[] _key;
+    [SerializeField, JsonProperty] private byte[] _IV;
+    [SerializeField, JsonProperty] private byte[] _encryptedValue;
 
 #if UNITY_EDITOR
 #pragma warning disable IDE0052 // Remove unread private members

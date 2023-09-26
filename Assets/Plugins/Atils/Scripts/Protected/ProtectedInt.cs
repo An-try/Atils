@@ -8,8 +8,8 @@ using Random = System.Random;
 [Serializable]
 public class ProtectedInt
 {
-	[SerializeField, JsonRequired] private string _value = 0.ToString("X4");
-	[SerializeField, JsonRequired] private string _offset = 0.ToString("X4");
+	[SerializeField, JsonProperty] private string _value = 0.ToString("X4");
+	[SerializeField, JsonProperty] private string _offset = 0.ToString("X4");
 #if UNITY_EDITOR
 #pragma warning disable IDE0052 // Remove unread private members
 	[SerializeField, JsonIgnore, ReadOnly] private int _real;

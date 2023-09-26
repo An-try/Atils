@@ -5,6 +5,22 @@ namespace Atils.Runtime.Extensions
 {
 	public static class ArrayExtensions
 	{
+		#region Getting Items
+
+		public static T GetNextWithLoop<T>(this T[] array, ref int currentIndex)
+		{
+			currentIndex++;
+
+			if (currentIndex >= array.Length)
+			{
+				currentIndex = 0;
+			}
+
+			return array[currentIndex];
+		}
+
+		#endregion
+
 		#region Finding items
 
 		/// <summary>

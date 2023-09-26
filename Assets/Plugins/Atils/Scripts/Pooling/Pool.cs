@@ -10,7 +10,7 @@ using Zenject;
 
 namespace Atils.Runtime.Pooling
 {
-	public abstract class Pool : PausableMonoBehaviour, IInitializable, IDisposable
+	public abstract class Pool : PausableMonoBehaviour, IDisposable
 	{
 		public Action<IPoolObject> OnObjectPulledOutFromPoolEvent { get; set; }
 		public Action<IPoolObject> OnObjectPulledOutFromPoolAndInitializedEvent { get; set; }
@@ -24,7 +24,8 @@ namespace Atils.Runtime.Pooling
 
 		public virtual List<PoolObject> PoolObjectPrefabs => _poolObjectPrefabs;
 
-		public virtual void Initialize()
+		[Inject]
+		public virtual void Construct()
 		{
 			InitializePoolObjectHolders();
 
@@ -257,6 +258,18 @@ namespace Atils.Runtime.Pooling
 
 		protected virtual PoolObjectsHolderView GetPoolObjectsHolderViewOfType(Type type)
 		{
+			if (_poolObjectsHolderViews.Count <= 0)
+			{
+				Debug.LogError($"Pool is empty.");
+				return default;
+			}
+
+			if (!_poolObjectsHolderViews.ContainsKey(type))
+			{
+				Debug.LogError($"Pool does not contain an object of type {type}");
+				return default;
+			}
+
 			return _poolObjectsHolderViews[type];
 		}
 
