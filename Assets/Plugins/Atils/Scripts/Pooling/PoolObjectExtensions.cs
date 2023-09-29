@@ -28,9 +28,9 @@ namespace Atils.Runtime.Pooling
 			return source;
 		}
 
-		public static T SetParent<T>(this T source, Transform parent) where T : IPoolObject
+		public static T SetParent<T>(this T source, Transform parent, bool worldPositionStays = true) where T : IPoolObject
 		{
-			source.Transform.parent = parent;
+			source.Transform.SetParent(parent, worldPositionStays);
 			return source;
 		}
 	}
