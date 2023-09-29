@@ -46,7 +46,8 @@ public class PoolingTest : MonoBehaviour
 				//_objectsPoolView.GetObject<SphereView>();
 				//SphereView sphereView1 = _scenePool.GetObject<SphereView>();
 				//SphereView sphereView2 = _scenePool.GetObject<SphereView>().SetPosition(new Vector3());
-				_scenePool.GetObject<SphereView>().SetPosition(new Vector3()).Initialize();
+				SphereView sphereView = _scenePool.GetObject<SphereView>().SetPosition(new Vector3());
+				sphereView.Initialize();
 
 				//float random = 10;
 

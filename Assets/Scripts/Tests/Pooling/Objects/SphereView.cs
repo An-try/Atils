@@ -12,7 +12,7 @@ public class SphereView : PoolObject
 	public Rigidbody Rigidbody;
 	Vector3 _direction = default;
 
-	public SphereView Initialize()
+	public void Initialize()
 	{
 		ReturnToPool(5);
 
@@ -28,8 +28,6 @@ public class SphereView : PoolObject
 		_direction = direction;
 
 		OnInitializedEvent.Invoke(this);
-
-		return this;
 	}
 
 	public override void UpdateObject(float timeStep)
