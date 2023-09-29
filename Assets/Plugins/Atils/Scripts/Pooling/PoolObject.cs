@@ -31,11 +31,6 @@ namespace Atils.Runtime.Pooling
 			OnReturnedToPoolEvent = null;
 		}
 
-		public virtual void Initialize()
-		{
-			OnInitializedEvent?.Invoke(this);
-		}
-
 		public void ReturnToPool(Action onReturnedToPool = null)
 		{
 			if (_isReturningToPool)
