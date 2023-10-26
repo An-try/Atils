@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace BidOnGamesUtils.Runtime.Timers
+namespace TimerSystem.Runtime.Timers
 {
 	public class CountdownTimer : ITimer, IDisposable
 	{

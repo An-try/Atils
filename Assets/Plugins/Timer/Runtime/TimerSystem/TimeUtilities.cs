@@ -1,4 +1,4 @@
-﻿namespace BidOnGamesUtils.Runtime.Timers
+﻿namespace TimerSystem.Runtime.Timers
 {
 	public static class TimeUtilities
 	{
