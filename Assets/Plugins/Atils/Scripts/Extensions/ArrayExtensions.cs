@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine.Assertions;
 
 namespace Atils.Runtime.Extensions
 {
@@ -7,7 +8,15 @@ namespace Atils.Runtime.Extensions
 	{
 		#region Getting Items
 
-		public static T GetNextWithLoop<T>(this T[] array, ref int currentIndex)
+		/// <summary>
+		/// Retrieves the next element in an array, and loops back to the first element if the end is reached.
+		/// </summary>
+		/// <typeparam name="T">The type of the elements in the array.</typeparam>
+		/// <param name="array">The array from which to get the next element.</param>
+		/// <param name="currentIndex">A reference to the current index within the array.
+		/// This value is incremented with each call and reset to 0 if it surpasses the bounds of the array.</param>
+		/// <returns>The next element in the array. If the end of the array is reached, returns the first element.</returns>
+		public static T GetNext<T>(this T[] array, ref int currentIndex)
 		{
 			currentIndex++;
 

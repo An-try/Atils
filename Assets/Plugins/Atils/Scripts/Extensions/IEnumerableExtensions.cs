@@ -86,6 +86,39 @@ namespace Atils.Runtime.Extensions
 
 		#endregion
 
+		#region Getting index
+
+		/// <summary>
+		/// Searches for an element that matches the conditions defined by the specified predicate,
+		/// and returns the zero-based index of the first occurrence within the entire <see cref="IEnumerable{T}"/>.
+		/// </summary>
+		/// <typeparam name="T">The type of the elements of <paramref name="source"/>.</typeparam>
+		/// <param name="source">The <see cref="IEnumerable{T}"/> to search.</param>
+		/// <param name="match">The predicate that defines the conditions of the element to search for.</param>
+		/// <returns>The zero-based index of the first occurrence of an element that matches the conditions defined by <paramref name="match"/>, 
+		/// if found; otherwise, -1.</returns>
+		/// <exception cref="ArgumentNullException"></exception>
+		public static int GetIndex<T>(this IEnumerable<T> source, Func<T, bool> match)
+		{
+			if (source == null) throw new ArgumentNullException(nameof(source));
+			if (match == null) throw new ArgumentNullException(nameof(match));
+
+			int index = 0;
+
+			foreach (var element in source)
+			{
+				if (match(element))
+				{
+					return index;
+				}
+				index++;
+			}
+
+			return -1;
+		}
+
+		#endregion
+
 		#region Finding items
 
 		/// <summary>
