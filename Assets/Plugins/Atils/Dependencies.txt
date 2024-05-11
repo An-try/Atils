@@ -1,2 +1,3 @@
 Extenject v9.2.0 https://github.com/Mathijs-Bakker/Extenject from https://assetstore.unity.com/packages/tools/utilities/extenject-dependency-injection-ioc-157735
 EasyButtons v1.3.0 https://github.com/madsbangh/EasyButtons
+Newtonsoft.Json v3.2.1 UPM add package by name "com.unity.nuget.newtonsoft-json"
