@@ -6,6 +6,11 @@ namespace Atils.Runtime.Extensions
 {
 	public static class IEnumerableExtensions
 	{
+		public static bool IsNullOrEmpty<T>(this IEnumerable<T> source)
+		{
+			return source == null || source.Count() <= 0;
+		}
+
 		#region Getting random items
 
 		/// <summary>

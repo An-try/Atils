@@ -34,19 +34,12 @@ namespace Atils.Runtime.Extensions
 			source.localPosition = source.localPosition.GetSetZ(value);
 		}
 
-		public static void DestroyChildren(this Transform source)
+		public static void DestroyChildrenSafely(this Transform source)
 		{
+			//save children to list and destroy them from this list
 			while (source.childCount > 0)
 			{
-				GameObject.Destroy(source.GetChild(0).gameObject);
-			}
-		}
-
-		public static void DestroyChildrenImmediate(this Transform source)
-		{
-			while (source.childCount > 0)
-			{
-				GameObject.DestroyImmediate(source.GetChild(0).gameObject);
+				source.GetChild(0).gameObject.DestroySafely();
 			}
 		}
 	}
