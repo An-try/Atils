@@ -43,5 +43,33 @@ namespace BrainBasedVR.Runtime.Utils
 			// Capitalize each word
 			return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name.ToLower());
 		}
+
+		/// <summary>
+		/// Safely truncates the string to the specified maximum length.
+		/// If the string is shorter than the maximum length, it returns the original string.
+		/// </summary>
+		/// <param name="str">The input string to truncate.</par</param>
+		/// <param name="maxLength">The maximum length of the resulting string.</param>
+		/// <returns>The truncated string if the original string length exceeds the maximum length,
+		/// or the original string if it is shorter. If the input string is null, it returns null.</returns>
+		public static string SubstringSafely(this string str, int maxLength)
+		{
+			if (string.IsNullOrEmpty(str))
+			{
+				return str;
+			}
+
+			return str.Length > maxLength ? str.Substring(0, maxLength) : str;
+		}
+
+		/// <summary>
+		/// Checks whether the string is null, empty, or consists only of white-space characters.
+		/// </summary>
+		/// <param name="str">The input string to check.</param>
+		/// <returns>true if the string is null, empty, or contains only white-space characters, otherwise, false.</returns>
+		public static bool IsNullOrEmptyOrWhiteSpace(this string str)
+		{
+			return string.IsNullOrEmpty(str) || string.IsNullOrWhiteSpace(str);
+		}
 	}
 }
