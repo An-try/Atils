@@ -1,6 +1,6 @@
 using System;
 
-namespace BrainBasedVR.Runtime.Utils
+namespace Atils.Runtime.Utils
 {
 	public static class DateTimeExtensions
     {

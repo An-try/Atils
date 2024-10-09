@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace BrainBasedVR.Runtime.Utils
+namespace Atils.Runtime.Utils
 {
 	public static class StringExtensions
 	{
