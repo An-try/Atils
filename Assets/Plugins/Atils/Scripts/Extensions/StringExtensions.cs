@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace Atils.Runtime.Utils
+namespace Atils.Runtime.Extensions
 {
 	public static class StringExtensions
 	{

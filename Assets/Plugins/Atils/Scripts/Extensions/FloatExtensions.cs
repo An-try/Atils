@@ -1,4 +1,4 @@
-namespace Atils.Runtime.Utils
+namespace Atils.Runtime.Extensions
 {
 	public static class FloatExtensions
     {
