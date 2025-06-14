@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Atils.Runtime.Extensions
@@ -36,10 +37,16 @@ namespace Atils.Runtime.Extensions
 
 		public static void DestroyChildrenSafely(this Transform source)
 		{
-			//save children to list and destroy them from this list
-			while (source.childCount > 0)
+			Transform[] children = new Transform[source.childCount];
+
+			for (int i = 0; i < source.childCount; i++)
 			{
-				source.GetChild(0).gameObject.DestroySafely();
+				children[i] = source.GetChild(i);
+			}
+
+			foreach (Transform child in children)
+			{
+				child?.gameObject?.DestroySafely();
 			}
 		}
 	}
