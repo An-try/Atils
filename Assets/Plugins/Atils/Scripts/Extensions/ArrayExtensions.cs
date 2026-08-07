@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Atils.Runtime.Extensions
 {
@@ -17,6 +18,12 @@ namespace Atils.Runtime.Extensions
 		/// <returns>The next element in the array. If the end of the array is reached, returns the first element.</returns>
 		public static T GetNext<T>(this T[] array, ref int currentIndex)
 		{
+			if (array == null || array.Length == 0)
+			{
+				Debug.LogError("Array is null or empty.");
+				return default;
+			}
+
 			currentIndex++;
 
 			if (currentIndex >= array.Length)
